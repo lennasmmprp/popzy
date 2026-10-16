@@ -252,11 +252,6 @@ h2.sec em{font:italic 400 1.05em/1 var(--serif);letter-spacing:-.02em;color:var(
 .heroine .splat{position:absolute;left:var(--mx);top:var(--my);width:0;height:0;z-index:4;pointer-events:none}
 .heroine .splat i{position:absolute;left:-12px;top:-12px;width:24px;height:24px;border-radius:50%;background:var(--bc);animation:spl .6s ease-out forwards}
 @keyframes spl{to{transform:translate(var(--x),var(--y)) scale(.4);opacity:0}}
-.goo{position:absolute;inset:0;z-index:2;pointer-events:none}
-.goo i{position:absolute;border-radius:50% 46% 52% 44%/48% 52% 46% 54%;background:radial-gradient(circle at 30% 28%,#ffffffb0 0 10%,transparent 24%),var(--bc);opacity:.93;transform:scale(0);transition:transform .35s cubic-bezier(.3,1.8,.5,1),opacity .6s}
-.goo i::after{content:"";position:absolute;left:38%;top:70%;width:22%;height:70%;border-radius:0 0 999px 999px;background:inherit}
-.goo.on i{transform:scale(1)}
-.goo.off i{opacity:0;transform:scale(1)}
 .marks{position:absolute;right:16%;top:6%;z-index:5;font:900 clamp(30px,4vw,48px)/1 var(--display);color:var(--cherry);-webkit-text-stroke:2px #fff;paint-order:stroke;opacity:0;transform:scale(.3) rotate(12deg)}
 .marks.on{animation:marks 1.4s cubic-bezier(.3,1.8,.5,1) forwards}
 @keyframes marks{0%{opacity:0;transform:scale(.3) rotate(12deg)}25%{opacity:1;transform:scale(1.15) rotate(8deg)}80%{opacity:1;transform:scale(1) rotate(8deg)}100%{opacity:0;transform:scale(1) rotate(8deg)}}
@@ -510,7 +505,6 @@ form button{border:0;background:var(--gum);color:var(--cherry);font:800 15px/1 v
         <div class="arena" aria-hidden="true">
           <div class="heroine" id="heroine">
             <img id="heroImg" src="img/lou-cut.webp" alt="" width="420" height="463">
-            <div class="goo" id="heroGoo"><i style="left:calc(var(--mx) - 17%);top:calc(var(--my) - 6%);width:14%;height:10%"></i><i style="left:calc(var(--mx) - 6%);top:calc(var(--my) + 2%);width:16%;height:10%"></i><i style="left:calc(var(--mx) - 6%);top:calc(var(--my) - 12%);width:8%;height:6%"></i><i style="left:calc(var(--mx) + 9%);top:calc(var(--my) - 7%);width:11%;height:8%"></i><i style="left:calc(var(--mx) - 1%);top:calc(var(--my) - 25%);width:7%;height:5%"></i></div>
             <span class="marks" id="marks">!!</span>
             <div class="gum" id="gum"></div>
             <div class="splat" id="splat"></div>
@@ -688,7 +682,7 @@ const HEROES={
  nour:{name:'Nour',tag:'la Cool',c:'#F5A300',c2:'#FFE671',bg:'#FFE9A6',mx:'46%',my:'54.5%',line:'<b>Nour</b> dit que tu tiendras pas 3 secondes. Prouve-lui le contraire.'},
  romy:{name:'Romy',tag:'la Futée',c:'#3A86C8',c2:'#B9DDF2',bg:'#CBE3F3',mx:'43%',my:'54.5%',line:'<b>Romy</b> a calculé la taille parfaite. À toi de la trouver.'}
 };
-const heroEl=$('#heroine'),heroImg=$('#heroImg'),heroLine=$('#heroLine'),pick=$('#pick'),gameSec=$('#bulle'),goo=$('#heroGoo'),marks=$('#marks');
+const heroEl=$('#heroine'),heroImg=$('#heroImg'),heroLine=$('#heroLine'),pick=$('#pick'),gameSec=$('#bulle'),marks=$('#marks');
 let heroId=store.get('popzy-heroine','lou');if(!HEROES[heroId])heroId='lou';
 const H=()=>HEROES[heroId];
 Object.keys(HEROES).forEach(k=>{const im=new Image();im.src=`img/${k}-cut.webp`});
@@ -698,16 +692,14 @@ function paintHero(){const h=H();heroImg.src=`img/${heroId}-cut.webp`;heroImg.al
   gameSec.style.backgroundColor=h.bg;heroLine.style.setProperty('--hl',h.c);heroLine.innerHTML=h.line;
   heroLine.classList.remove('swap');void heroLine.offsetWidth;heroLine.classList.add('swap');
   $$('button',pick).forEach(b=>b.setAttribute('aria-checked',String(b.dataset.h===heroId)))}
-function setHero(k){if(k===heroId||!HEROES[k])return;if(holding)stop();heroId=k;store.set('popzy-heroine',k);goo.classList.remove('on','off');
+function setHero(k){if(k===heroId||!HEROES[k])return;if(holding)stop();heroId=k;store.set('popzy-heroine',k);
   if(reduce){paintHero();return}
   heroEl.classList.remove('in','shock','yay');heroEl.classList.add('out');pop(1.3);
   setTimeout(()=>{paintHero();heroEl.classList.remove('out');void heroEl.offsetWidth;heroEl.classList.add('in');pop(.9)},280)}
 pick.addEventListener('click',e=>{const b=e.target.closest('button[data-h]');if(b)setHero(b.dataset.h)});
 pick.addEventListener('keydown',e=>{if(!['ArrowRight','ArrowLeft'].includes(e.key))return;const ks=Object.keys(HEROES);const i=(ks.indexOf(heroId)+(e.key==='ArrowRight'?1:ks.length-1))%ks.length;setHero(ks[i]);pick.querySelector(`[data-h="${ks[i]}"]`).focus();e.preventDefault()});
-let gooT;
-function gooFace(){clearTimeout(gooT);goo.classList.remove('off');goo.classList.add('on');marks.classList.remove('on');void marks.offsetWidth;marks.classList.add('on');
-  if(!reduce){heroEl.classList.remove('shock','yay','in');void heroEl.offsetWidth;heroEl.classList.add('shock')}
-  gooT=setTimeout(()=>{goo.classList.add('off');setTimeout(()=>goo.classList.remove('on','off'),650)},2400)}
+function gooFace(){marks.classList.remove('on');void marks.offsetWidth;marks.classList.add('on');
+  if(!reduce){heroEl.classList.remove('shock','yay','in');void heroEl.offsetWidth;heroEl.classList.add('shock')}}
 function celebrate(){if(reduce)return;heroEl.classList.remove('shock','yay','in');void heroEl.offsetWidth;heroEl.classList.add('yay');
   for(let i=0;i<7;i++){const sp=document.createElement('span');sp.className='spark';sp.textContent='✦';const a=-Math.PI*(.1+.8*Math.random());const r=70+Math.random()*90;
     sp.style.cssText=`left:${45+Math.random()*10}%;top:${20+Math.random()*15}%;--x:${Math.cos(a)*r}px;--y:${Math.sin(a)*r}px;animation-delay:${i*40}ms`;heroEl.appendChild(sp);setTimeout(()=>sp.remove(),1200)}}
