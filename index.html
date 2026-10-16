@@ -123,7 +123,7 @@ body.up .band div{animation-direction:reverse}body.up .band.b div{animation-dire
   background:radial-gradient(ellipse at 28% 18%,#fff8 0 9%,transparent 22%),linear-gradient(160deg,var(--c1),var(--c2));
   box-shadow:inset -14px -18px 40px #0003,inset 10px 12px 30px #fff4,0 30px 60px -20px #2a061466;
   transform:perspective(800px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) rotate(-5deg);transition:transform .2s ease-out;display:grid;place-items:center;overflow:hidden}
-@media (max-width:720px){.slide .pk{width:min(52vw,24svh);justify-self:start;margin-left:8vw}.pack{width:100%}.slide p.who{margin-bottom:10px}.chips{display:none}}
+@media (max-width:720px){.slide .pk{width:min(52vw,26svh);justify-self:start;margin-left:8vw}.slide .tin{width:100%}.slide p.who{margin-bottom:10px}.chips{display:none}}
 .pack .nm{font:900 clamp(30px,4vw,48px)/1 var(--display);letter-spacing:-.05em;color:var(--milk);transform:rotate(-12deg);text-shadow:3px 3px 0 var(--cherry)}
 .pack .tag{position:absolute;bottom:13%;left:50%;translate:-50% 0;font:600 11px/1.2 var(--body);letter-spacing:.12em;text-transform:uppercase;background:var(--milk);color:var(--cherry);padding:7px 10px;border-radius:999px;white-space:nowrap}
 .pack .pill{position:absolute;width:20%;aspect-ratio:1.6;border-radius:40%;background:linear-gradient(160deg,#fff,#ffe3ef);box-shadow:inset -3px -4px 6px #0002;top:12%;right:12%;rotate:24deg}
@@ -152,6 +152,48 @@ body.up .band div{animation-direction:reverse}body.up .band.b div{animation-dire
 .fact{border-top:1.5px solid var(--gum);padding-top:14px}
 .fact b{display:block;font:900 clamp(40px,5vw,64px)/1 var(--display);letter-spacing:-.05em;color:var(--gum)}
 .fact span{font-size:15px;opacity:.85}
+
+/* ---------- la capsule (packaging rechargeable) ---------- */
+.tin{--c1:#FF2D87;--c2:#FFB3CF;position:relative;width:100%;max-width:300px;aspect-ratio:1/1.12;justify-self:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.tin .ring{position:absolute;left:50%;top:0;translate:-50% 0;width:30%;aspect-ratio:1/1.1;border-radius:48% 48% 42% 42%;border:clamp(6px,1vw,9px) solid #d7d1db;box-shadow:inset 1px 2px 0 #fff,0 2px 0 #8f8496,inset -1px -2px 0 #a99fae;z-index:0}
+.tin .ring::after{content:"";position:absolute;right:-18%;top:30%;width:22%;height:42%;border-radius:4px;background:linear-gradient(90deg,#bdb4c2,#f3f0f5,#a99fae)}
+.tin .base,.tin .lid{position:absolute;left:0;right:0;bottom:0;top:15%;border-radius:47%}
+.tin .base{z-index:1;background:linear-gradient(160deg,var(--c1),var(--c2));box-shadow:inset -12px -16px 30px #0003,0 34px 50px -22px #2a061477}
+.tin .base::before{content:"";position:absolute;inset:8%;border-radius:47%;background:radial-gradient(circle at 50% 40%,#fff,#fbe6ef);box-shadow:inset 0 8px 16px #0002}
+.tin .mirror{position:absolute;left:50%;top:17%;translate:-50% 0;width:34%;aspect-ratio:2.1;border-radius:50%;background:linear-gradient(115deg,#dfe4ea,#fff 38%,#b4bec9 58%,#f2f4f7);box-shadow:0 2px 4px #0002}
+.tin .pel{position:absolute;width:21%;aspect-ratio:1.5;border-radius:46%;background:linear-gradient(160deg,#fff,var(--c2));box-shadow:inset -3px -4px 6px #0002,0 3px 5px #0002}
+.tin .p1{left:24%;top:44%;rotate:22deg}.tin .p2{left:51%;top:50%;rotate:-14deg}.tin .p3{left:36%;top:64%;rotate:6deg}
+.tin .lid{z-index:2;display:grid;place-items:center;transform-origin:50% 6%;transition:transform .7s cubic-bezier(.3,1.5,.5,1);
+  background:radial-gradient(ellipse at 30% 20%,#fffc 0 7%,#fff5 12%,transparent 28%),radial-gradient(ellipse at 75% 85%,#fff3,transparent 40%),linear-gradient(155deg,var(--c1),var(--c2));
+  box-shadow:inset -14px -18px 34px #0003,inset 10px 12px 26px #fff6}
+.tin .lid::after{content:"";position:absolute;inset:8%;border-radius:47%;border:2px solid #ffffff4d;box-shadow:inset 0 0 0 1px #00000010}
+.tin .emb{font:900 clamp(28px,3.8vw,46px)/1 var(--display);letter-spacing:-.05em;color:color-mix(in srgb,var(--c1) 82%,#000 4%);text-shadow:-1px -1px 0 #ffffff99,2px 2px 2px #00000030;rotate:-9deg}
+.tin .rf{position:absolute;bottom:17%;left:50%;translate:-50% 0;font:600 10px/1 var(--body);letter-spacing:.16em;text-transform:uppercase;color:#fff;opacity:.9;white-space:nowrap}
+.tin .ms{position:absolute;top:19%;right:15%;width:21%;aspect-ratio:1;border-radius:50%;background:var(--milk);color:var(--c1);display:grid;place-items:center;font:900 clamp(14px,1.8vw,22px)/1 var(--body);rotate:14deg;box-shadow:0 3px 0 #2a061426;border:2px dashed color-mix(in srgb,var(--c1) 40%,transparent)}
+.tin:hover .lid,.tin.open .lid{transform:translateY(-50%) translateX(-6%) rotate(-20deg)}
+.tin:focus-visible{outline:3px solid var(--hot);outline-offset:6px;border-radius:40%}
+.capsule{background:var(--milk);padding-block:clamp(70px,9vw,130px);overflow:hidden}
+.capsule .wrap{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:clamp(30px,6vw,90px);align-items:center}
+@media (max-width:860px){.capsule .wrap{grid-template-columns:1fr}}
+.stage{position:relative;display:grid;place-items:center;padding:30px 0 50px}
+.stage::before{content:"";position:absolute;width:88%;aspect-ratio:1;border-radius:50%;background:var(--glow,#FABBCB);opacity:.55;transition:background .5s;filter:blur(2px)}
+.stage .tin{max-width:340px}
+.refill{position:absolute;right:2%;bottom:6%;width:clamp(96px,12vw,130px);aspect-ratio:3/4;z-index:3;rotate:9deg;
+  background:linear-gradient(170deg,#e2c69d,#cfae80);clip-path:polygon(0 6%,8% 0,16% 6%,25% 0,33% 6%,42% 0,50% 6%,58% 0,67% 6%,75% 0,83% 6%,92% 0,100% 6%,100% 100%,0 100%);
+  display:grid;align-content:center;justify-items:center;gap:4px;padding:18% 8% 8%;text-align:center;color:#4a2d14;filter:drop-shadow(0 12px 14px #2a061433)}
+.refill b{font:900 13px/1 var(--display);letter-spacing:-.03em}
+.refill span{font:600 9px/1.25 var(--body);letter-spacing:.12em;text-transform:uppercase}
+.refill i{font:italic 400 15px/1 var(--serif)}
+.picker{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 26px}
+.picker button{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--cherry);background:transparent;border-radius:999px;padding:9px 14px 9px 9px;font:600 14px/1 var(--body);cursor:pointer}
+.picker button::before{content:"";width:16px;height:16px;border-radius:50%;background:var(--sw)}
+.picker button[aria-pressed="true"]{background:var(--cherry);color:var(--milk)}
+.feat{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 28px;margin:0;padding:0;list-style:none}
+@media (max-width:520px){.feat{grid-template-columns:1fr}}
+.feat li{border-top:1.5px solid var(--cherry);padding-top:12px}
+.feat b{display:block;font:800 clamp(17px,1.5vw,20px)/1.15 var(--display);letter-spacing:-.03em;margin-bottom:6px}
+.feat span{font-size:15px;line-height:1.45}
+.openbtn{margin-top:26px;border:0;background:var(--hot);color:var(--milk);font:800 14px/1 var(--display);padding:15px 22px;border-radius:999px;cursor:pointer}
 
 /* ---------- routine + nokia ---------- */
 .duo{background:var(--milk);padding-block:clamp(70px,9vw,130px)}
@@ -263,7 +305,7 @@ form button{border:0;background:var(--gum);color:var(--cherry);font:800 15px/1 v
   <a class="logo" href="#top" aria-label="Popzy, retour en haut">pop<i>z</i>y</a>
   <div class="links">
     <a href="#saveurs">Saveurs</a>
-    <a href="#manifeste">Manifeste</a>
+    <a href="#capsule">La capsule</a>
     <a href="#bulle" class="keep">Le jeu</a>
     <button id="snd" aria-pressed="false" type="button">Son</button>
   </div>
@@ -315,6 +357,27 @@ form button{border:0;background:var(--gum);color:var(--cherry);font:800 15px/1 v
         <div class="fact rv"><b>0 g</b><span>de sucre par dragée. Le xylitol fait le job.</span></div>
         <div class="fact rv"><b>20 min</b><span>de mastication après le repas, la routine que recommandent les dentistes.</span></div>
         <div class="fact rv"><b>10</b><span>dragées par étui. Assez pour partager, pas assez pour tout le monde.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="capsule" id="capsule">
+    <div class="wrap">
+      <div class="stage" id="capStage">
+        <div class="tin" id="capTin" tabindex="0" role="button" aria-label="Ouvrir la capsule" data-hover><span class="ring"></span><div class="base"><span class="mirror"></span><span class="pel p1"></span><span class="pel p2"></span><span class="pel p3"></span></div><div class="lid"><span class="emb">popzy</span><span class="ms">♥</span><span class="rf">Fraise Frisson</span></div></div>
+        <div class="refill" aria-hidden="true"><span>Recharge</span><b>popzy</b><i id="rfName">Fraise Frisson</i><span>10 dragées · papier compostable</span></div>
+      </div>
+      <div class="rv">
+        <h2 class="sec">La capsule<br><em>qui reste.</em></h2>
+        <p class="lede">Une boîte en aluminium que tu gardes, que tu décores et que tu accroches à ton sac. Quand elle est vide, tu glisses une recharge dedans.</p>
+        <div class="picker" id="picker" aria-label="Couleur de la capsule"></div>
+        <ul class="feat">
+          <li><b>Aluminium recyclé</b><span>Solide et léger, recyclable à l'infini. Elle survit au fond du sac pendant des années.</span></li>
+          <li><b>Recharge en papier</b><span>10 dragées dans un sachet compostable, en caisse à côté des bonbons. Zéro plastique.</span></li>
+          <li><b>Mousqueton intégré</b><span>Elle s'accroche au sac, à la ceinture ou aux clés, toujours à portée de main.</span></li>
+          <li><b>À customiser</b><span>Un couvercle plat pour tes stickers, un miroir à l'intérieur, et des éditions limitées à collectionner.</span></li>
+        </ul>
+        <button class="openbtn" id="openCap" type="button">Ouvrir la capsule</button>
       </div>
     </div>
   </section>
@@ -436,15 +499,22 @@ const fill=(el,w)=>{const h=w.map(t=>`<span>${t}</span>`).join('');el.innerHTML=
 
 /* saveurs */
 const flavors=[
- {n:'Fraise Frisson',s:'la classique qui ne l\'est pas',d:'Fraise des bois, une pointe acidulée. Celle qu\'on sort pour la photo et qu\'on finit en story.',c1:'#FF2D87',c2:'#FFB3CF',bg:'#FABBCB',ink:'#2A0614',chips:['Acidulée','Best-seller'],g:'lou',who:'Lou, la Pop',q:'Si c\'est pas en story, ça s\'est pas passé.'},
- {n:'Mangue Sunset',s:'les vacances dans ta poche',d:'Mangue mûre et fruit de la passion. Pas besoin de crier, ça se remarque tout seul.',c1:'#FF8A1A',c2:'#FFE671',bg:'#FFE671',ink:'#2A0614',chips:['Fruitée','Attitude'],g:'nour',who:'Nour, la Cool',q:'Je fais pas la queue, c\'est la queue qui me suit.'},
- {n:'Menthe Givrée',s:'l\'haleine qui fait des jaloux',d:'Menthe glaciale, la plus efficace pour tes dents. Les malins l\'avaient repérée avant tout le monde.',c1:'#3A86C8',c2:'#CDEBF5',bg:'#B9DDEA',ink:'#2A0614',chips:['Fraîcheur max','Soin des dents'],g:'romy',who:'Romy, la Futée',q:'J\'avais remarqué avant tout le monde.'}
+ {n:'Fraise Frisson',s:'la classique qui ne l\'est pas',d:'Fraise des bois, une pointe acidulée. Celle qu\'on sort pour la photo et qu\'on finit en story.',c1:'#FF2D87',c2:'#FFB3CF',bg:'#FABBCB',ink:'#2A0614',chips:['Acidulée','Best-seller'],g:'lou',m:'♥',who:'Lou, la Pop',q:'Si c\'est pas en story, ça s\'est pas passé.'},
+ {n:'Mangue Sunset',s:'les vacances dans ta poche',d:'Mangue mûre et fruit de la passion. Pas besoin de crier, ça se remarque tout seul.',c1:'#FF8A1A',c2:'#FFE671',bg:'#FFE671',ink:'#2A0614',chips:['Fruitée','Attitude'],g:'nour',m:'★',who:'Nour, la Cool',q:'Je fais pas la queue, c\'est la queue qui me suit.'},
+ {n:'Menthe Givrée',s:'l\'haleine qui fait des jaloux',d:'Menthe glaciale, la plus efficace pour tes dents. Les malins l\'avaient repérée avant tout le monde.',c1:'#3A86C8',c2:'#CDEBF5',bg:'#B9DDEA',ink:'#2A0614',chips:['Fraîcheur max','Soin des dents'],g:'romy',m:'✦',who:'Romy, la Futée',q:'J\'avais remarqué avant tout le monde.'}
 ];
 const track=$('#track');
 track.innerHTML=flavors.map((f,i)=>`<article class="slide">
-  <div class="pk"><div class="pack" style="--c1:${f.c1};--c2:${f.c2}" data-hover><span class="pill"></span><span class="nm">popzy</span><span class="tag">${f.n} · 10 dragées</span></div><img class="av" src="img/${f.g}.jpg" alt="${f.who}" width="260" height="260" loading="lazy"></div>
+  <div class="pk"><div class="tin" style="--c1:${f.c1};--c2:${f.c2}" tabindex="0" role="button" aria-label="Ouvrir la capsule ${f.n}" data-hover><span class="ring"></span><div class="base"><span class="mirror"></span><span class="pel p1"></span><span class="pel p2"></span><span class="pel p3"></span></div><div class="lid"><span class="emb">popzy</span><span class="ms">${f.m}</span><span class="rf">${f.n}</span></div></div><img class="av" src="img/${f.g}.jpg" alt="${f.who}" width="260" height="260" loading="lazy"></div>
   <div><h3>${f.n}<em>${f.s}</em></h3><p>${f.d}</p><p class="who">« ${f.q} »<b>Le goût de ${f.who}</b></p><div class="chips">${f.chips.map(c=>`<span>${c}</span>`).join('')}</div></div></article>`).join('');
-$$('.pack').forEach(p=>{p.addEventListener('pointermove',e=>{const r=p.getBoundingClientRect();p.style.setProperty('--ry',((e.clientX-r.left)/r.width-.5)*24+'deg');p.style.setProperty('--rx',-((e.clientY-r.top)/r.height-.5)*24+'deg')});p.addEventListener('pointerleave',()=>{p.style.setProperty('--rx','0deg');p.style.setProperty('--ry','0deg')})});
+document.addEventListener('click',e=>{const t=e.target.closest('.tin');if(t){t.classList.toggle('open');pop(t.classList.contains('open')?1.4:.9)}});
+document.addEventListener('keydown',e=>{const t=e.target.closest&&e.target.closest('.tin');if(t&&(e.key==='Enter'||e.key===' ')){e.preventDefault();t.click()}});
+/* capsule : choix de la couleur */
+const cap=$('#capTin'),capStage=$('#capStage'),rfName=$('#rfName');
+$('#picker').innerHTML=flavors.map((f,i)=>`<button type="button" style="--sw:${f.c1}" aria-pressed="${i===0}" data-i="${i}">${f.n}</button>`).join('');
+function setCap(i){const f=flavors[i];cap.style.setProperty('--c1',f.c1);cap.style.setProperty('--c2',f.c2);$('.ms',cap).textContent=f.m;$('.rf',cap).textContent=f.n;capStage.style.setProperty('--glow',f.bg);rfName.textContent=f.n;$$('#picker button').forEach((b,j)=>b.setAttribute('aria-pressed',j===i))}
+$('#picker').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;setCap(+b.dataset.i);pop(1.1)});setCap(0);
+$('#openCap').addEventListener('click',()=>{cap.click();$('#openCap').textContent=cap.classList.contains('open')?'Fermer la capsule':'Ouvrir la capsule'});
 const hs=$('#saveurs'),sticky=$('.hs-sticky'),count=$('#count');let lastIdx=-1;
 document.documentElement.style.setProperty('--stage-last',flavors[flavors.length-1].bg);
 function onHS(){const r=hs.getBoundingClientRect();const p=clamp(-r.top/(r.height-innerHeight));const dist=Math.max(0,track.scrollWidth-innerWidth);track.style.transform=`translate3d(${-p*dist}px,0,0)`;
