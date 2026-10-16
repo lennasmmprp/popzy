@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Popzy</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Serif:ital@0;1&family=Unbounded:wght@500;800;900&family=VT323&display=swap">
+<style>
+/* Layout: posters qui se chevauchent — formes molles, bandes inclinées, une scène horizontale qui change de couleur par saveur */
+:root{
+  --cherry:#2A0614;   /* encre : cerise presque noire, jamais du noir pur */
+  --gum:#FF8EC3;      /* bubblegum */
+  --hot:#FF2D87;      /* rose qui claque */
+  --milk:#FFF0F5;     /* lait fraise */
+  --lilac:#C8B5FF;    /* Polly Pocket */
+  --butter:#FFD84A;   /* sticker jaune */
+  --display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --serif:"Instrument Serif","Times New Roman",Georgia,serif;
+  --body:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --pixel:"VT323","Courier New",monospace;
+  --gx:max(16px,env(safe-area-inset-left,0px));
+  --gxr:max(16px,env(safe-area-inset-right,0px));
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--milk);color:var(--cherry);font-family:var(--body);font-size:17px;line-height:1.5;overflow-x:hidden}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:90;opacity:.13;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--hot);outline-offset:3px;border-radius:6px}
+.wrap{padding-left:var(--gx);padding-right:var(--gxr);max-width:1320px;margin-inline:auto}
+
+/* ---------- loader : la bulle gonfle puis éclate ---------- */
+#loader{position:fixed;inset:0;z-index:100;background:var(--hot);display:grid;place-items:center;animation:out .45s 1.25s forwards}
+#loader .bub{width:44vmin;aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle at 32% 28%,#fff 0 6%,#ffd1e6 7% 18%,var(--gum) 45%,#ff6fae 100%);
+  animation:inflate 1.2s cubic-bezier(.5,0,.75,0) forwards}
+#loader span{position:absolute;font:900 clamp(28px,6vw,64px)/1 var(--display);color:var(--milk);letter-spacing:-.02em;mix-blend-mode:overlay}
+@keyframes inflate{0%{transform:scale(.08)}80%{transform:scale(1.15)}92%{transform:scale(1.3);opacity:1}100%{transform:scale(2.4);opacity:0}}
+@keyframes out{to{opacity:0;visibility:hidden}}
+
+/* ---------- nav ---------- */
+nav{position:fixed;z-index:50;top:calc(14px + env(safe-area-inset-top,0px));left:calc(14px + env(safe-area-inset-left,0px));right:calc(14px + env(safe-area-inset-right,0px));
+  display:flex;align-items:center;justify-content:space-between;gap:12px;pointer-events:none}
+nav>*{pointer-events:auto}
+.logo{font:900 26px/1 var(--display);letter-spacing:-.04em;text-decoration:none;background:var(--cherry);color:var(--gum);padding:10px 18px 12px;border-radius:999px;transform:rotate(-4deg);display:inline-flex;transition:transform .3s cubic-bezier(.3,1.8,.5,1)}
+.logo:hover{transform:rotate(4deg) scale(1.06)}
+.logo i{font-style:normal;display:inline-block;animation:wob 2.6s ease-in-out infinite}
+@keyframes wob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-3px) rotate(12deg)}}
+.links{display:flex;gap:4px;background:color-mix(in srgb,var(--milk) 78%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:6px;border-radius:999px;border:1.5px solid var(--cherry)}
+.links a,.links button{font:600 14px/1 var(--body);text-decoration:none;padding:10px 14px;border-radius:999px;border:0;background:none;cursor:pointer;white-space:nowrap}
+.links a:hover,.links button:hover{background:var(--cherry);color:var(--milk)}
+.links button[aria-pressed="true"]{background:var(--hot);color:var(--milk)}
+@media (max-width:720px){.links a:not(.keep){display:none}}
+
+/* ---------- curseur ---------- */
+#cur{position:fixed;left:0;top:0;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:var(--hot);z-index:95;pointer-events:none;
+  display:grid;place-items:center;font:800 11px/1 var(--display);color:var(--milk);transition:width .25s,height .25s,margin .25s,background .25s}
+#cur.big{width:74px;height:74px;margin:-37px 0 0 -37px}
+#cur b{opacity:0;transition:opacity .2s}#cur.big b{opacity:1}
+@media (hover:none),(pointer:coarse){#cur{display:none}}
+@media (hover:hover) and (pointer:fine){body.cursor-on, body.cursor-on a, body.cursor-on button{cursor:none}}
+
+/* ---------- hero ---------- */
+.hero{position:relative;overflow:hidden;background:var(--gum);padding-block:clamp(120px,16vw,170px) clamp(90px,10vw,130px)}
+.goo{position:absolute;inset:0;filter:url(#goo);pointer-events:none}
+.goo .b{position:absolute;border-radius:50%;background:var(--hot)}
+.goo .b:nth-child(1){width:34vw;height:34vw;left:62%;top:-8%;animation:fl 9s ease-in-out infinite}
+.goo .b:nth-child(2){width:22vw;height:22vw;left:72%;top:30%;animation:fl 7s -2s ease-in-out infinite reverse}
+.goo .b:nth-child(3){width:14vw;height:14vw;left:-4%;top:62%;animation:fl 8s -4s ease-in-out infinite}
+.goo .b:nth-child(4){width:9vw;height:9vw;left:50%;top:70%;animation:fl 6s -1s ease-in-out infinite reverse}
+.goo .b.me{width:11vw;height:11vw;min-width:90px;min-height:90px;left:0;top:0;translate:-50% -50%}
+@keyframes fl{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-4vw,3vw) scale(1.12)}66%{transform:translate(3vw,-2vw) scale(.9)}}
+.hero .wrap{position:relative;display:grid;gap:28px}
+.kicker{font:600 13px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.kicker b{background:var(--cherry);color:var(--gum);padding:6px 10px;border-radius:999px;font-weight:600}
+h1{margin:0;font:900 clamp(54px,12.5vw,190px)/.86 var(--display);letter-spacing:-.055em;text-wrap:balance}
+h1 .l1{display:block}
+h1 .pop{display:inline-flex;color:var(--milk);-webkit-text-stroke:0}
+h1 .pop span{display:inline-block;animation:drop .9s cubic-bezier(.3,1.6,.5,1) both;transition:transform .35s cubic-bezier(.3,2,.5,1)}
+h1 .pop span:nth-child(1){animation-delay:1.35s}h1 .pop span:nth-child(2){animation-delay:1.45s}h1 .pop span:nth-child(3){animation-delay:1.55s}
+h1 .pop span:hover{transform:translateY(-14%) rotate(-8deg) scale(1.08)}
+h1 em{font:italic 400 .62em/1 var(--serif);letter-spacing:-.02em;display:inline-block;transform:rotate(-3deg) translateY(-.1em);margin-left:.12em}
+@keyframes drop{0%{transform:translateY(-110%) scaleY(1.3);opacity:0}60%{transform:translateY(6%) scaleY(.85)}100%{transform:none;opacity:1}}
+.hero-low{display:flex;gap:28px;align-items:end;justify-content:space-between;flex-wrap:wrap}
+.hero-low p{max-width:30ch;margin:0;font-size:clamp(18px,1.6vw,22px);line-height:1.35}
+.cta{display:inline-flex;align-items:center;gap:12px;text-decoration:none;background:var(--cherry);color:var(--milk);font:800 15px/1 var(--display);letter-spacing:-.01em;padding:20px 26px;border-radius:999px 999px 999px 18px;transition:transform .3s cubic-bezier(.3,1.8,.5,1),border-radius .4s}
+.cta:hover{transform:rotate(-3deg) scale(1.05);border-radius:18px 999px 999px 999px}
+.cta svg{width:18px;height:18px}
+.seal{position:absolute;right:max(4vw,16px);bottom:-30px;width:clamp(120px,14vw,180px);aspect-ratio:1;animation:spin 14s linear infinite}
+.seal text{font:800 11px var(--display);letter-spacing:.18em;fill:var(--cherry)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.floaty{position:absolute;pointer-events:none;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff9 0 12%,transparent 13%),var(--hot);animation:rise 1.6s ease-out forwards}
+@keyframes rise{0%{transform:scale(.2);opacity:1}80%{opacity:1}100%{transform:translateY(-140px) scale(1.2);opacity:0}}
+
+/* ---------- bandes croisées ---------- */
+.cross{position:relative;height:clamp(150px,18vw,220px);overflow:hidden;background:var(--milk);margin-top:-2px}
+.band{position:absolute;left:-5%;width:110%;top:50%;white-space:nowrap;padding:14px 0;font:900 clamp(22px,3vw,40px)/1 var(--display);letter-spacing:-.03em}
+.band.a{background:var(--cherry);color:var(--gum);transform:translateY(-50%) rotate(-4deg)}
+.band.b{background:var(--butter);color:var(--cherry);transform:translateY(-50%) rotate(3deg)}
+.band div{display:inline-flex;gap:.8em;animation:mq 22s linear infinite}
+.band.b div{animation-direction:reverse;animation-duration:26s}
+.band span::after{content:"✺";margin-left:.8em;color:var(--hot)}
+body.up .band div{animation-direction:reverse}body.up .band.b div{animation-direction:normal}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* ---------- saveurs : scène horizontale ---------- */
+.hs{position:relative;height:calc(var(--n) * 85vh);background:var(--stage,var(--gum))}
+.hs-sticky{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:var(--stage,var(--gum));color:var(--ink,var(--cherry));transition:background-color .7s ease,color .7s ease;display:flex;flex-direction:column;justify-content:center;gap:clamp(16px,3vh,36px)}
+.hs-head{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;width:100%}
+.hs-head h2{margin:0;font:900 clamp(34px,6vw,84px)/.9 var(--display);letter-spacing:-.05em}
+.hs-head h2 em{font:italic 400 1.05em/1 var(--serif);letter-spacing:-.02em}
+.count{font:800 clamp(16px,1.6vw,20px)/1 var(--display);font-variant-numeric:tabular-nums}
+.track{display:flex;gap:clamp(20px,4vw,60px);padding-left:var(--gx);padding-right:30vw;will-change:transform}
+.slide{flex:0 0 min(86vw,820px);display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(18px,3vw,40px);align-items:center}
+@media (max-width:720px){.slide{grid-template-columns:1fr;gap:14px}}
+.pack{--c1:var(--hot);--c2:var(--gum);position:relative;aspect-ratio:3/4;max-width:100%;justify-self:center;width:100%;max-width:330px;border-radius:44% 44% 26% 26%/26% 26% 14% 14%;
+  background:radial-gradient(ellipse at 28% 18%,#fff8 0 9%,transparent 22%),linear-gradient(160deg,var(--c1),var(--c2));
+  box-shadow:inset -14px -18px 40px #0003,inset 10px 12px 30px #fff4,0 30px 60px -20px #2a061466;
+  transform:perspective(800px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) rotate(-5deg);transition:transform .2s ease-out;display:grid;place-items:center;overflow:hidden}
+@media (max-width:720px){.pack{width:min(58vw,26svh);justify-self:start;margin-left:6vw}}
+.pack .nm{font:900 clamp(30px,4vw,48px)/1 var(--display);letter-spacing:-.05em;color:var(--milk);transform:rotate(-12deg);text-shadow:3px 3px 0 var(--cherry)}
+.pack .tag{position:absolute;bottom:13%;left:50%;translate:-50% 0;font:600 11px/1.2 var(--body);letter-spacing:.12em;text-transform:uppercase;background:var(--milk);color:var(--cherry);padding:7px 10px;border-radius:999px;white-space:nowrap}
+.pack .pill{position:absolute;width:20%;aspect-ratio:1.6;border-radius:40%;background:linear-gradient(160deg,#fff,#ffe3ef);box-shadow:inset -3px -4px 6px #0002;top:12%;right:12%;rotate:24deg}
+.slide h3{margin:0 0 10px;font:900 clamp(30px,4.6vw,64px)/.92 var(--display);letter-spacing:-.05em;text-wrap:balance}
+.slide h3 em{display:block;font:italic 400 .8em/1.05 var(--serif);letter-spacing:-.01em}
+.slide p{margin:0 0 16px;max-width:36ch;font-size:clamp(16px,1.3vw,19px)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chips span{font:600 13px/1 var(--body);border:1.5px solid currentColor;padding:8px 12px;border-radius:999px}
+.hint{font:600 13px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;opacity:.7}
+
+/* ---------- manifeste ---------- */
+.drip{display:block;width:100%;height:clamp(40px,7vw,90px);margin-top:-1px}
+.manif{background:var(--cherry);color:var(--milk);padding-block:clamp(60px,9vw,130px)}
+.manif .eyebrow{font:600 13px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--gum);margin:0 0 24px}
+.manif p.big{margin:0;font:800 clamp(30px,5.4vw,78px)/1.04 var(--display);letter-spacing:-.045em;text-wrap:balance}
+.manif .w{color:color-mix(in srgb,var(--milk) 38%,transparent);transition:color .35s}
+.manif .w.on{color:var(--milk)}
+.manif .w.hl.on{color:var(--gum);font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.01em}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:clamp(40px,6vw,80px)}
+@media (max-width:720px){.facts{grid-template-columns:1fr}}
+.fact{border-top:1.5px solid var(--gum);padding-top:14px}
+.fact b{display:block;font:900 clamp(40px,5vw,64px)/1 var(--display);letter-spacing:-.05em;color:var(--gum)}
+.fact span{font-size:15px;opacity:.85}
+
+/* ---------- routine + nokia ---------- */
+.duo{background:var(--milk);padding-block:clamp(70px,9vw,130px)}
+.duo .wrap{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(30px,6vw,90px);align-items:center}
+@media (max-width:860px){.duo .wrap{grid-template-columns:1fr}}
+h2.sec{margin:0 0 8px;font:900 clamp(34px,5vw,70px)/.92 var(--display);letter-spacing:-.05em;text-wrap:balance}
+h2.sec em{font:italic 400 1.05em/1 var(--serif);letter-spacing:-.02em;color:var(--hot)}
+.lede{margin:0 0 28px;max-width:44ch;font-size:18px}
+.routine{list-style:none;margin:0;padding:22px;background:#FDE1EC;border-radius:32px 32px 32px 8px;display:grid;gap:4px}
+.routine li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px;align-items:center;padding:12px 6px;border-bottom:1px solid #2a06141f}
+.routine li:last-child{border:0}
+.routine time{font:500 clamp(26px,3vw,38px)/1 var(--display);letter-spacing:-.04em;font-variant-numeric:tabular-nums;min-width:4.2ch}
+.routine small{display:block;font:600 11px/1.3 var(--body);letter-spacing:.12em;text-transform:uppercase;opacity:.65}
+.routine strong{font-weight:600}
+.sw{width:58px;height:34px;border-radius:999px;border:0;background:#2a061426;position:relative;cursor:pointer;transition:background .3s}
+.sw::after{content:"";position:absolute;top:4px;left:4px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 2px 6px #0003;transition:transform .35s cubic-bezier(.3,1.8,.5,1)}
+.sw[aria-checked="true"]{background:#34C759}
+.sw[aria-checked="true"]::after{transform:translateX(24px)}
+.score{margin-top:16px;font:800 15px/1.3 var(--display)}
+.score b{color:var(--hot)}
+.nokia{justify-self:center;width:min(300px,80vw);background:linear-gradient(150deg,#ffd0e4,#f79cc4 60%,#e682b0);border-radius:120px 120px 70px 70px/90px 90px 60px 60px;padding:44px 26px 34px;
+  box-shadow:inset -10px -14px 30px #b0306f55,inset 8px 10px 20px #fff8,0 40px 70px -30px #2a061488;transform:rotate(7deg);transition:transform .5s cubic-bezier(.3,1.6,.5,1)}
+.nokia:hover{transform:rotate(-3deg) translateY(-6px)}
+.nokia .brand{text-align:center;font:800 12px/1 var(--display);letter-spacing:.3em;color:#9a2f62;margin-bottom:14px}
+.screen{background:#c9d1c4;border-radius:14px;border:6px solid #5b2140;padding:12px 12px 10px;min-height:190px;font:400 22px/1.05 var(--pixel);color:#1d2a1d;display:flex;flex-direction:column}
+.screen .bar{display:flex;justify-content:space-between;font-size:17px;border-bottom:1px dashed #1d2a1d66;margin-bottom:8px;padding-bottom:2px}
+.screen .msg{flex:1;text-transform:uppercase;letter-spacing:.02em}
+.screen .msg::after{content:"▌";animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.screen .ft{display:flex;justify-content:space-between;font-size:18px}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:18px}
+.keys button{border:0;background:#ffe6f0;border-radius:50% 50% 40% 40%;padding:8px 0;font:600 13px/1 var(--body);color:#7a2550;cursor:pointer;box-shadow:inset 0 -3px 0 #e79ec0}
+.keys button:active{transform:translateY(2px);box-shadow:none}
+
+/* ---------- jeu de la bulle ---------- */
+.game{background:var(--lilac);position:relative;overflow:hidden;padding-block:clamp(70px,9vw,120px)}
+.game .wrap{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(24px,5vw,70px);align-items:center}
+@media (max-width:860px){.game .wrap{grid-template-columns:1fr}}
+.arena{position:relative;height:clamp(300px,40vw,460px);display:grid;place-items:center}
+.face{position:absolute;bottom:0;width:clamp(150px,18vw,210px);aspect-ratio:1;border-radius:50% 50% 46% 46%;background:var(--butter);box-shadow:inset -14px -14px 0 #e8b92b}
+.face::before,.face::after{content:"";position:absolute;top:34%;width:12%;height:18%;border-radius:50%;background:var(--cherry)}
+.face::before{left:28%}.face::after{right:28%}
+.gum{position:absolute;bottom:calc(clamp(150px,18vw,210px)*.18);width:40px;aspect-ratio:1;border-radius:50%;translate:0 50%;
+  background:radial-gradient(circle at 32% 28%,#fff 0 7%,#ffd1e6 8% 18%,var(--gum) 50%,var(--hot) 100%);box-shadow:inset -8px -10px 20px #c0186455;transform-origin:50% 100%;transition:transform .08s linear}
+.gum.wob{animation:jig .12s linear infinite}
+@keyframes jig{50%{translate:2px 50%}}
+.splat{position:absolute;inset:0;pointer-events:none;display:grid;place-items:center}
+.splat i{position:absolute;width:24px;height:24px;border-radius:50%;background:var(--hot);animation:spl .6s ease-out forwards}
+@keyframes spl{to{transform:translate(var(--x),var(--y)) scale(.4);opacity:0}}
+.blow{user-select:none;-webkit-user-select:none;touch-action:none;border:0;cursor:pointer;background:var(--cherry);color:var(--milk);font:900 clamp(18px,2vw,22px)/1 var(--display);padding:22px 30px;border-radius:999px;letter-spacing:-.02em;transition:transform .2s}
+.blow:active{transform:scale(.96)}
+.readout{display:flex;gap:28px;margin-top:22px;flex-wrap:wrap}
+.readout div{font:600 12px/1.2 var(--body);letter-spacing:.12em;text-transform:uppercase}
+.readout b{display:block;font:900 clamp(32px,4vw,52px)/1 var(--display);letter-spacing:-.05em;font-variant-numeric:tabular-nums;text-transform:none}
+.verdict{min-height:1.5em;font:italic 400 clamp(22px,2.4vw,30px)/1.2 var(--serif);margin:18px 0 0}
+
+/* ---------- mur de stickers ---------- */
+.wall{background:var(--hot);color:var(--milk);padding-block:clamp(70px,9vw,120px) 30px;overflow:hidden}
+.wall h2.sec em{color:var(--butter)}
+.board{position:relative;height:clamp(380px,46vw,520px);margin-top:20px}
+.stk{position:absolute;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;font:900 clamp(16px,2vw,24px)/1 var(--display);letter-spacing:-.03em;padding:16px 22px;
+  box-shadow:0 10px 0 -2px #2a061444;transition:box-shadow .2s,scale .2s cubic-bezier(.3,1.8,.5,1)}
+.stk.drag{cursor:grabbing;scale:1.1;box-shadow:0 22px 30px -8px #2a061466;z-index:5}
+.s1{background:var(--butter);color:var(--cherry);border-radius:999px}
+.s2{background:var(--milk);color:var(--hot);border-radius:50%;width:9em;aspect-ratio:1;display:grid;place-items:center;text-align:center;padding:10px}
+.s3{background:var(--cherry);color:var(--gum);border-radius:12px 40px 12px 40px}
+.s4{background:var(--lilac);color:var(--cherry);border-radius:40px 40px 40px 6px;font-family:var(--serif);font-style:italic;font-weight:400;font-size:clamp(24px,3vw,36px)}
+.s5{background:var(--gum);color:var(--cherry);clip-path:polygon(50% 0,61% 32%,98% 35%,68% 57%,79% 91%,50% 71%,21% 91%,32% 57%,2% 35%,39% 32%);width:8.5em;aspect-ratio:1;display:grid;place-items:center;text-align:center;font-size:clamp(13px,1.4vw,17px);padding:0}
+.s6{background:var(--milk);color:var(--cherry);border-radius:999px;border:3px dashed var(--cherry)}
+
+/* ---------- footer ---------- */
+footer{background:var(--cherry);color:var(--milk);overflow:hidden;padding-block:clamp(60px,8vw,110px) 28px}
+.club{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:30px;align-items:end}
+@media (max-width:860px){.club{grid-template-columns:1fr}}
+.club h2{margin:0;font:900 clamp(34px,5vw,68px)/.92 var(--display);letter-spacing:-.05em}
+.club h2 em{font:italic 400 1.05em/1 var(--serif);color:var(--gum)}
+form{display:flex;gap:8px;flex-wrap:wrap;background:#ffffff12;padding:8px;border-radius:999px}
+form input{flex:1 1 200px;min-width:0;border:0;background:transparent;color:var(--milk);font:500 17px var(--body);padding:14px 16px}
+form input::placeholder{color:#fff0f599}
+form button{border:0;background:var(--gum);color:var(--cherry);font:800 15px/1 var(--display);padding:16px 24px;border-radius:999px;cursor:pointer}
+.note{font-size:13px;opacity:.6;margin:10px 0 0 16px}
+.mega{font:900 clamp(80px,24vw,380px)/.8 var(--display);letter-spacing:-.07em;color:var(--gum);margin:clamp(40px,6vw,80px) 0 20px;transform-origin:50% 100%;white-space:nowrap;text-align:center}
+.legal{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;opacity:.7}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));translate:-50% 0;background:var(--butter);color:var(--cherry);font:800 15px/1.2 var(--display);padding:16px 22px;border-radius:999px;z-index:80;transform:translateY(160%);transition:transform .45s cubic-bezier(.3,1.6,.5,1);max-width:calc(100vw - 32px);text-align:center}
+#toast.show{transform:none}
+
+/* reveals : visibles au repos, JS ajoute .pre seulement sous la ligne de flottaison */
+.rv{transition:transform .9s cubic-bezier(.2,1.2,.3,1),opacity .9s}
+.rv.pre{transform:translateY(50px) rotate(2deg);opacity:.0}
+
+@media (prefers-reduced-motion:reduce){
+  #loader{display:none}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  h1 .pop span{animation:none}
+  .rv.pre{transform:none;opacity:1}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="goo"><feGaussianBlur in="SourceGraphic" stdDeviation="18" result="b"/><feColorMatrix in="b" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -10"/></filter>
+</svg>
+
+<div id="loader" aria-hidden="true"><div class="bub"></div><span>pop.</span></div>
+<div id="cur" aria-hidden="true"><b>POP</b></div>
+
+<nav>
+  <a class="logo" href="#top" aria-label="Popzy, retour en haut">pop<i>z</i>y</a>
+  <div class="links">
+    <a href="#saveurs">Saveurs</a>
+    <a href="#manifeste">Manifeste</a>
+    <a href="#bulle" class="keep">Le jeu</a>
+    <button id="snd" aria-pressed="false" type="button">Son</button>
+  </div>
+</nav>
+
+<main id="top">
+  <section class="hero" id="hero">
+    <div class="goo" aria-hidden="true"><div class="b"></div><div class="b"></div><div class="b"></div><div class="b"></div><div class="b me" id="me"></div></div>
+    <div class="wrap">
+      <div class="kicker"><b>Nouveau</b> Chewing-gum sans sucre · formule soin des dents</div>
+      <h1><span class="l1">Mâche fort,</span><span class="pop" aria-label="pop"><span>P</span><span>O</span><span>P</span></span><em>plus fort.</em></h1>
+      <div class="hero-low">
+        <p>Le gum qui prend soin de ton sourire. Et de ton ego. Zéro sucre, beaucoup d'attitude.</p>
+        <a class="cta" href="#saveurs" data-hover>Choisir ma saveur
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </div>
+    <svg class="seal" viewBox="0 0 200 200" aria-hidden="true">
+      <defs><path id="circ" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/></defs>
+      <circle cx="100" cy="100" r="96" fill="#FFD84A"/>
+      <text><textPath href="#circ">SUGAR FREE ✺ ORAL CARE ✺ GOT CHEW? ✺ </textPath></text>
+      <text x="100" y="114" text-anchor="middle" style="font-size:40px;letter-spacing:-2px">0%</text>
+    </svg>
+  </section>
+
+  <div class="cross" aria-hidden="true">
+    <div class="band a"><div id="m1"></div></div>
+    <div class="band b"><div id="m2"></div></div>
+  </div>
+
+  <section class="hs" id="saveurs" style="--n:5">
+    <div class="hs-sticky">
+      <div class="wrap hs-head">
+        <h2>Cinq saveurs,<br><em>zéro sucre.</em></h2>
+        <div><div class="count" id="count">01 / 05</div><div class="hint">Scrolle, ça glisse</div></div>
+      </div>
+      <div class="track" id="track"></div>
+    </div>
+  </section>
+
+  <svg class="drip" viewBox="0 0 1200 90" preserveAspectRatio="none" aria-hidden="true" style="background:var(--stage-last,#C8F0DA)" id="dripTop">
+    <path fill="#2A0614" d="M0 90V30c60 0 70 46 120 46s50-50 110-50 40 64 100 64 60-58 130-58 70 30 130 30 50-44 120-44 60 70 120 70 70-62 140-62 70 38 130 38 60-30 100-30V90z"/>
+  </svg>
+  <section class="manif" id="manifeste">
+    <div class="wrap">
+      <p class="eyebrow">Le manifeste Popzy</p>
+      <p class="big" id="manifText">On ne fait pas des bulles pour faire joli. On fait des bulles pour qu'on nous *regarde.* Pas de sucre, pas d'excuses, juste un sourire qui prend *toute* la place.</p>
+      <div class="facts">
+        <div class="fact rv"><b>0 g</b><span>de sucre par dragée. Le xylitol fait le job.</span></div>
+        <div class="fact rv"><b>20 min</b><span>de mastication après le repas, la routine que recommandent les dentistes.</span></div>
+        <div class="fact rv"><b>10</b><span>dragées par étui. Assez pour partager, pas assez pour tout le monde.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="duo">
+    <div class="wrap">
+      <div class="rv">
+        <h2 class="sec">Ta journée,<br><em>en 4 pops.</em></h2>
+        <p class="lede">Une dragée après chaque moment clé. Active tes pops, ton sourire te dira merci.</p>
+        <ul class="routine" id="routine"></ul>
+        <p class="score" id="score">Aujourd'hui : <b>2</b> pops sur 4. Encore un effort.</p>
+      </div>
+      <div class="nokia rv" aria-label="Téléphone rétro qui affiche un message">
+        <div class="brand">POPKIA</div>
+        <div class="screen">
+          <div class="bar"><span>16:20</span><span>▮▮▮▯</span></div>
+          <div class="msg" id="sms" aria-live="polite"></div>
+          <div class="ft"><span>Options</span><span>Retour</span></div>
+        </div>
+        <div class="keys" id="keys">
+          <button type="button" data-k="1">1</button><button type="button" data-k="2">2 abc</button><button type="button" data-k="3">3 def</button>
+          <button type="button" data-k="4">4 ghi</button><button type="button" data-k="5">5 jkl</button><button type="button" data-k="6">6 mno</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="game" id="bulle">
+    <div class="wrap">
+      <div>
+        <h2 class="sec">Gonfle.<br>Lâche.<br><em>Avant que ça pète.</em></h2>
+        <p class="lede">Reste appuyé·e pour souffler, relâche pour garder ta bulle. Trop gourmand·e et c'est sur ta figure.</p>
+        <button class="blow" id="blow" type="button" data-hover>Maintenir pour souffler</button>
+        <div class="readout">
+          <div>Ta bulle<b id="now">0 cm</b></div>
+          <div>Record<b id="best">0 cm</b></div>
+        </div>
+        <p class="verdict" id="verdict" aria-live="polite"></p>
+      </div>
+      <div class="arena" aria-hidden="true">
+        <div class="face"></div>
+        <div class="gum" id="gum"></div>
+        <div class="splat" id="splat"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wall">
+    <div class="wrap">
+      <h2 class="sec">Décore,<br><em>c'est ton mur.</em></h2>
+      <p class="lede">Attrape les stickers, déplace-les, fais ta compo. Personne ne juge.</p>
+      <div class="board" id="board">
+        <div class="stk s1" style="left:4%;top:8%;rotate:-8deg">Bulle &gt; drama</div>
+        <div class="stk s2" style="left:62%;top:2%;rotate:10deg">0 sucre<br>100 % audace</div>
+        <div class="stk s3" style="left:30%;top:40%;rotate:4deg">Got chew?</div>
+        <div class="stk s4" style="left:8%;top:62%;rotate:-5deg">hot take</div>
+        <div class="stk s5" style="left:70%;top:52%;rotate:-14deg">Sourire certifié</div>
+        <div class="stk s6" style="left:40%;top:8%;rotate:-3deg">Pop it, don't drop it</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="club">
+      <h2>Rejoins le<br><em>Chew Club.</em></h2>
+      <div>
+        <form id="form">
+          <label for="mail" style="position:absolute;left:-9999px">Ton email</label>
+          <input id="mail" type="email" placeholder="ton@email.com" required autocomplete="email">
+          <button type="submit">Je m'inscris</button>
+        </form>
+        <p class="note">Drops en avant-première, saveurs secrètes, zéro spam. Maquette : le formulaire n'envoie rien.</p>
+      </div>
+    </div>
+    <div class="mega" id="mega" aria-hidden="true">popzy</div>
+    <div class="legal"><span>© 2026 Popzy · Chewing-gum sans sucre</span><span>@popzy.club · #GotChew</span></div>
+  </div>
+</footer>
+<div id="toast" role="status"></div>
+
+<script>
+(()=>{
+const $=(s,c=document)=>c.querySelector(s), $$=(s,c=document)=>[...c.querySelectorAll(s)];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fine=matchMedia('(hover:hover) and (pointer:fine)').matches;
+const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+/* son : petit "pop" synthétisé, coupé par défaut */
+let ac=null, soundOn=false;
+const snd=$('#snd');
+snd.addEventListener('click',()=>{soundOn=!soundOn;snd.setAttribute('aria-pressed',soundOn);snd.textContent=soundOn?'Son on':'Son';if(soundOn){ac=ac||new (window.AudioContext||window.webkitAudioContext)();pop(1)}});
+function pop(s=1){if(!soundOn||!ac)return;const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;o.type='sine';o.frequency.setValueAtTime(900*s,t);o.frequency.exponentialRampToValueAtTime(120,t+.09);g.gain.setValueAtTime(.35,t);g.gain.exponentialRampToValueAtTime(.001,t+.12);o.connect(g).connect(ac.destination);o.start(t);o.stop(t+.13)}
+
+/* toast */
+const toast=$('#toast');let tt;function say(m){toast.textContent=m;toast.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('show'),2800)}
+
+/* curseur */
+const cur=$('#cur');
+if(fine&&!reduce){document.body.classList.add('cursor-on');let x=innerWidth/2,y=innerHeight/2,cx=x,cy=y;
+  addEventListener('pointermove',e=>{x=e.clientX;y=e.clientY});
+  (function loop(){cx+=(x-cx)*.22;cy+=(y-cy)*.22;cur.style.transform=`translate(${cx}px,${cy}px)`;requestAnimationFrame(loop)})();
+  document.addEventListener('pointerover',e=>{cur.classList.toggle('big',!!e.target.closest('a,button,[data-hover],.stk'))});
+}else cur.remove();
+
+/* hero : blob qui suit + bulles au clic */
+const hero=$('#hero'),me=$('#me');
+let hx=innerWidth*.8,hy=200,mx=hx,my=hy;
+hero.addEventListener('pointermove',e=>{const r=hero.getBoundingClientRect();hx=e.clientX-r.left;hy=e.clientY-r.top});
+if(!reduce)(function f(){mx+=(hx-mx)*.08;my+=(hy-my)*.08;me.style.left=mx+'px';me.style.top=my+'px';requestAnimationFrame(f)})();
+else{me.style.left='85%';me.style.top='60%'}
+hero.addEventListener('click',e=>{if(e.target.closest('a'))return;const r=hero.getBoundingClientRect();for(let i=0;i<5;i++){const b=document.createElement('i');b.className='floaty';const s=14+Math.random()*34;b.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left+(Math.random()-.5)*80}px;top:${e.clientY-r.top+(Math.random()-.5)*40}px;animation-delay:${i*.06}s`;hero.appendChild(b);setTimeout(()=>b.remove(),1900)}pop(1.2)});
+
+/* bandes */
+const words1=['Got chew?','Pop','Zéro sucre','Toute l\'attitude','Smile loud'],words2=['Bulle > drama','Sugar free','Oral care','Chew club','Pop it'];
+const fill=(el,w)=>{const h=w.map(t=>`<span>${t}</span>`).join('');el.innerHTML=h+h+h+h};fill($('#m1'),words1);fill($('#m2'),words2);
+
+/* saveurs */
+const flavors=[
+ {n:'Fraise Frisson',s:'la classique qui ne l\'est pas',d:'Fraise des bois, une pointe acidulée. La saveur du premier date, sans le stress.',c1:'#FF2D87',c2:'#FF9CCB',bg:'#FF8EC3',ink:'#2A0614',chips:['Acidulée','Best-seller']},
+ {n:'Cerise Noire',s:'pour les soirs où tu sors',d:'Cerise burlat et une touche de réglisse. Sombre, intense, un peu dangereuse.',c1:'#8C0F35',c2:'#E8173A',bg:'#5B0A23',ink:'#FFF0F5',chips:['Intense','Édition nuit']},
+ {n:'Lilas Fizz',s:'ça pétille sur la langue',d:'Violette, citron et des cristaux qui crépitent. Comme un sms à 2 h du mat.',c1:'#8E6BFF',c2:'#D9CCFF',bg:'#C8B5FF',ink:'#2A0614',chips:['Pétillante','Nouveau']},
+ {n:'Mangue Sunset',s:'les vacances dans ta poche',d:'Mangue mûre et fruit de la passion. Tu mâches, t\'es déjà en terrasse.',c1:'#FF7A1A',c2:'#FFD84A',bg:'#FFC23D',ink:'#2A0614',chips:['Fruitée','Été 26']},
+ {n:'Menthe Givrée',s:'l\'haleine qui fait des jaloux',d:'Menthe poivrée glaciale. Celle qui bosse le plus pour tes dents, et ça se sent.',c1:'#18A77A',c2:'#9EF0D2',bg:'#C8F0DA',ink:'#2A0614',chips:['Fraîcheur max','Soin des dents']}
+];
+const track=$('#track');
+track.innerHTML=flavors.map((f,i)=>`<article class="slide">
+  <div class="pack" style="--c1:${f.c1};--c2:${f.c2}" data-hover><span class="pill"></span><span class="nm">popzy</span><span class="tag">${f.n} · 10 dragées</span></div>
+  <div><h3>${f.n}<em>${f.s}</em></h3><p>${f.d}</p><div class="chips">${f.chips.map(c=>`<span>${c}</span>`).join('')}</div></div></article>`).join('');
+$$('.pack').forEach(p=>{p.addEventListener('pointermove',e=>{const r=p.getBoundingClientRect();p.style.setProperty('--ry',((e.clientX-r.left)/r.width-.5)*24+'deg');p.style.setProperty('--rx',-((e.clientY-r.top)/r.height-.5)*24+'deg')});p.addEventListener('pointerleave',()=>{p.style.setProperty('--rx','0deg');p.style.setProperty('--ry','0deg')})});
+const hs=$('#saveurs'),sticky=$('.hs-sticky'),count=$('#count');let lastIdx=-1;
+document.documentElement.style.setProperty('--stage-last',flavors[4].bg);
+function onHS(){const r=hs.getBoundingClientRect();const p=clamp(-r.top/(r.height-innerHeight));const dist=Math.max(0,track.scrollWidth-innerWidth);track.style.transform=`translate3d(${-p*dist}px,0,0)`;
+  const idx=Math.min(flavors.length-1,Math.floor(p*flavors.length*0.999));if(idx!==lastIdx){lastIdx=idx;const f=flavors[idx];sticky.style.setProperty('--stage',f.bg);sticky.style.setProperty('--ink',f.ink);hs.style.setProperty('--stage',f.bg);count.textContent=String(idx+1).padStart(2,'0')+' / 05';if(lastIdx>=0)pop(.8+idx*.1)}}
+
+/* manifeste mot à mot */
+const mt=$('#manifText');
+mt.innerHTML=mt.textContent.split(' ').map(w=>{const hl=/^\*.*\*[.,]?$/.test(w);return `<span class="w${hl?' hl':''}">${w.replace(/\*/g,'')}</span>`}).join(' ');
+const ws=$$('.w',mt);
+function onManif(){const r=mt.getBoundingClientRect();const p=clamp((innerHeight*.85-r.top)/(r.height+innerHeight*.35));const n=Math.round(p*ws.length);ws.forEach((w,i)=>w.classList.toggle('on',i<n))}
+
+/* routine */
+const R=[['8:00','Après le café','Menthe Givrée',true],['12:45','Post-déj','Fraise Frisson',true],['16:20','Le coup de mou','Lilas Fizz',false],['19:30','Avant le date','Cerise Noire',false]];
+const ul=$('#routine');ul.innerHTML=R.map((r,i)=>`<li><time>${r[0]}</time><div><small>${r[1]}</small><strong>${r[2]}</strong></div><button class="sw" type="button" role="switch" aria-checked="${r[3]}" aria-label="Pop de ${r[0]}, ${r[2]}" data-i="${i}"></button></li>`).join('');
+const sc=$('#score');const msgs=['Zéro pop. Ton sourire boude.','Un pop. On a vu mieux.','Encore un effort.','Presque parfait.','Journée parfaite. Sourire 10/10.'];
+function upd(){const n=$$('.sw[aria-checked="true"]',ul).length;sc.innerHTML=`Aujourd'hui : <b>${n}</b> pop${n>1?'s':''} sur 4. ${msgs[n]}`}
+ul.addEventListener('click',e=>{const b=e.target.closest('.sw');if(!b)return;b.setAttribute('aria-checked',b.getAttribute('aria-checked')!=='true');pop(1.1);upd()});upd();
+
+/* nokia */
+const SMS=['Trop de Popzy dans mon sac ? Said no girl ever <3','T\'as un gum ? Pas pour moi, pour mon ego.','Rdv 19h30. J\'ai pris la Cerise Noire. Prépare-toi.','Ma bulle était plus grosse que la tienne. Cheh.','Sourire activé. Haleine validée. Go.','Le Chew Club a parlé : Lilas Fizz est la meilleure.'];
+const sms=$('#sms');let typer;
+function type(t){clearInterval(typer);let i=0;sms.textContent='';if(reduce){sms.textContent=t;return}typer=setInterval(()=>{sms.textContent=t.slice(0,++i);if(i>=t.length)clearInterval(typer)},38)}
+sms.textContent=SMS[0];
+$('#keys').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;type(SMS[b.dataset.k-1]);pop(1.6)});
+
+/* jeu de la bulle */
+const gum=$('#gum'),blow=$('#blow'),nowEl=$('#now'),bestEl=$('#best'),ver=$('#verdict'),splat=$('#splat');
+let best=store.get('popzy-best',0);bestEl.textContent=best+' cm';
+let size=0,limit=0,raf=null,holding=false,dead=false;
+const MAXS=9;
+function grow(){if(!holding)return;size+=0.035+size*0.012;gum.style.transform=`scale(${1+size})`;nowEl.textContent=Math.round(size*4)+' cm';gum.classList.toggle('wob',size>limit*.75);if(size>=limit){burst();return}raf=requestAnimationFrame(grow)}
+function start(e){e.preventDefault();if(holding)return;holding=true;dead=false;size=0;limit=MAXS*(.45+Math.random()*.55);ver.textContent='';blow.textContent='Souffle…';try{blow.setPointerCapture(e.pointerId)}catch(_){}grow()}
+function stop(){if(!holding)return;holding=false;cancelAnimationFrame(raf);gum.classList.remove('wob');blow.textContent='Maintenir pour souffler';if(dead)return;const cm=Math.round(size*4);
+  if(cm>best){best=cm;store.set('popzy-best',best);bestEl.textContent=best+' cm';ver.textContent=`Nouveau record : ${cm} cm. Icône.`;pop(.7)}else ver.textContent=cm<8?'Mignon. Un peu timide.':cm<20?'Pas mal du tout.':'Énorme. On t\'a vu·e.';
+  setTimeout(()=>{if(!holding){gum.style.transform='scale(1)';}},900)}
+function burst(){dead=true;holding=false;gum.classList.remove('wob');gum.style.transform='scale(0)';nowEl.textContent='0 cm';ver.textContent='POP. C\'est sur ta figure.';blow.textContent='Maintenir pour souffler';pop(.5);
+  for(let i=0;i<14;i++){const d=document.createElement('i');const a=Math.random()*Math.PI*2,r=80+Math.random()*120;d.style.setProperty('--x',Math.cos(a)*r+'px');d.style.setProperty('--y',Math.sin(a)*r+'px');splat.appendChild(d);setTimeout(()=>d.remove(),650)}
+  setTimeout(()=>{gum.style.transform='scale(1)'},700)}
+blow.addEventListener('pointerdown',start);['pointerup','pointercancel','pointerleave'].forEach(t=>blow.addEventListener(t,stop));
+blow.addEventListener('keydown',e=>{if((e.key===' '||e.key==='Enter')&&!e.repeat){holding=false;start(e)}});blow.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter')stop()});
+blow.addEventListener('contextmenu',e=>e.preventDefault());
+
+/* stickers draggables */
+const board=$('#board');
+$$('.stk',board).forEach(s=>{let ox,oy,sx,sy;
+  s.addEventListener('pointerdown',e=>{s.setPointerCapture(e.pointerId);s.classList.add('drag');ox=e.clientX;oy=e.clientY;sx=s.offsetLeft;sy=s.offsetTop;board.appendChild(s);pop(1.3)});
+  s.addEventListener('pointermove',e=>{if(!s.classList.contains('drag'))return;const bw=board.clientWidth-s.offsetWidth,bh=board.clientHeight-s.offsetHeight;s.style.left=clamp(sx+e.clientX-ox,0,bw)+'px';s.style.top=clamp(sy+e.clientY-oy,-20,bh+20)+'px'});
+  const end=()=>s.classList.remove('drag');s.addEventListener('pointerup',end);s.addEventListener('pointercancel',end)});
+
+/* form */
+$('#form').addEventListener('submit',e=>{e.preventDefault();say('Bienvenue au Chew Club. (Maquette : rien n\'est envoyé.)');pop(1);e.target.reset()});
+
+/* reveals */
+if(!reduce&&'IntersectionObserver' in window){const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.remove('pre');io.unobserve(en.target)}}),{threshold:.15});
+  $$('.rv').forEach(el=>{if(el.getBoundingClientRect().top>innerHeight){el.classList.add('pre');io.observe(el)}})}
+
+/* scroll global */
+const mega=$('#mega');let lastY=scrollY,tick=false;
+function onScroll(){const y=scrollY;document.body.classList.toggle('up',y<lastY);lastY=y;onHS();onManif();
+  const r=mega.getBoundingClientRect();const p=clamp((innerHeight-r.top)/innerHeight);if(!reduce)mega.style.transform=`scaleY(${.5+p*.7}) skewX(${(1-p)*-12}deg)`;tick=false}
+addEventListener('scroll',()=>{if(!tick){tick=true;requestAnimationFrame(onScroll)}},{passive:true});
+addEventListener('resize',onScroll);onScroll();
+})();
+</script>
+</body>
+</html>
