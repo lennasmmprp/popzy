@@ -232,17 +232,48 @@ h2.sec em{font:italic 400 1.05em/1 var(--serif);letter-spacing:-.02em;color:var(
 .game{background:var(--lilac);position:relative;overflow:hidden;padding-block:clamp(70px,9vw,120px)}
 .game .wrap{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(24px,5vw,70px);align-items:center}
 @media (max-width:860px){.game .wrap{grid-template-columns:1fr}}
-.arena{position:relative;height:clamp(300px,40vw,460px);display:grid;place-items:center}
-.face{position:absolute;bottom:0;width:clamp(150px,18vw,210px);aspect-ratio:1;border-radius:50% 50% 46% 46%;background:var(--butter);box-shadow:inset -14px -14px 0 #e8b92b}
-.face::before,.face::after{content:"";position:absolute;top:34%;width:12%;height:18%;border-radius:50%;background:var(--cherry)}
-.face::before{left:28%}.face::after{right:28%}
-.gum{position:absolute;bottom:calc(clamp(150px,18vw,210px)*.18);width:40px;aspect-ratio:1;border-radius:50%;translate:0 50%;
-  background:radial-gradient(circle at 32% 28%,#fff 0 7%,#ffd1e6 8% 18%,var(--gum) 50%,var(--hot) 100%);box-shadow:inset -8px -10px 20px #c0186455;transform-origin:50% 100%;transition:transform .08s linear}
-.gum.wob{animation:jig .12s linear infinite}
-@keyframes jig{50%{translate:2px 50%}}
-.splat{position:absolute;inset:0;pointer-events:none;display:grid;place-items:center}
-.splat i{position:absolute;width:24px;height:24px;border-radius:50%;background:var(--hot);animation:spl .6s ease-out forwards}
+.game{transition:background-color .6s ease}
+.arena-col{display:flex;flex-direction:column;align-items:center;gap:14px;min-width:0}
+.arena{position:relative;width:100%;height:clamp(320px,40vw,470px);display:flex;justify-content:center;align-items:flex-end}
+.heroine{--bc:#FF2D87;--bc2:#FFB3CF;--mx:44%;--my:55%;position:relative;width:min(100%,clamp(260px,32vw,390px));aspect-ratio:420/463;transform-origin:50% 100%}
+.heroine img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none;pointer-events:none}
+.heroine.out{animation:hOut .28s cubic-bezier(.5,0,.9,.4) forwards}
+.heroine.in{animation:hIn .7s cubic-bezier(.3,1.6,.5,1)}
+@keyframes hOut{to{transform:translateY(18%) scale(.6) rotate(-8deg);opacity:0}}
+@keyframes hIn{0%{transform:translateY(30%) scale(.5);opacity:0}60%{transform:translateY(-6%) scale(1.05);opacity:1}100%{transform:none}}
+.heroine.shock{animation:shock .5s ease-in-out}
+@keyframes shock{0%,100%{transform:none}20%{transform:translateX(-4%) rotate(-3deg)}40%{transform:translateX(4%) rotate(3deg)}60%{transform:translateX(-2%) rotate(-1deg)}80%{transform:translateX(2%)}}
+.heroine.yay{animation:yay .8s cubic-bezier(.3,1.6,.5,1)}
+@keyframes yay{0%,100%{transform:none}30%{transform:translateY(-14%) scale(1.04,.98) rotate(-3deg)}55%{transform:translateY(0) scale(1.06,.94)}75%{transform:translateY(-5%) rotate(2deg)}}
+.heroine .gum{position:absolute;left:var(--mx);top:var(--my);bottom:auto;width:9%;aspect-ratio:1;border-radius:50%;translate:-50% -50%;z-index:3;transform-origin:50% 50%;
+  background:radial-gradient(circle at 32% 28%,#fff 0 7%,color-mix(in srgb,var(--bc2) 70%,#fff) 8% 18%,var(--bc2) 48%,var(--bc) 100%);box-shadow:inset -6px -8px 16px #00000026;transition:transform .08s linear,background .4s}
+.heroine .gum.wob{animation:jig .12s linear infinite}
+@keyframes jig{50%{translate:calc(-50% + 2px) -50%}}
+.heroine .splat{position:absolute;left:var(--mx);top:var(--my);width:0;height:0;z-index:4;pointer-events:none}
+.heroine .splat i{position:absolute;left:-12px;top:-12px;width:24px;height:24px;border-radius:50%;background:var(--bc);animation:spl .6s ease-out forwards}
 @keyframes spl{to{transform:translate(var(--x),var(--y)) scale(.4);opacity:0}}
+.goo{position:absolute;inset:0;z-index:2;pointer-events:none}
+.goo i{position:absolute;border-radius:50% 46% 52% 44%/48% 52% 46% 54%;background:radial-gradient(circle at 30% 28%,#ffffffb0 0 10%,transparent 24%),var(--bc);opacity:.93;transform:scale(0);transition:transform .35s cubic-bezier(.3,1.8,.5,1),opacity .6s}
+.goo i::after{content:"";position:absolute;left:38%;top:70%;width:22%;height:70%;border-radius:0 0 999px 999px;background:inherit}
+.goo.on i{transform:scale(1)}
+.goo.off i{opacity:0;transform:scale(1)}
+.marks{position:absolute;right:16%;top:6%;z-index:5;font:900 clamp(30px,4vw,48px)/1 var(--display);color:var(--cherry);-webkit-text-stroke:2px #fff;paint-order:stroke;opacity:0;transform:scale(.3) rotate(12deg)}
+.marks.on{animation:marks 1.4s cubic-bezier(.3,1.8,.5,1) forwards}
+@keyframes marks{0%{opacity:0;transform:scale(.3) rotate(12deg)}25%{opacity:1;transform:scale(1.15) rotate(8deg)}80%{opacity:1;transform:scale(1) rotate(8deg)}100%{opacity:0;transform:scale(1) rotate(8deg)}}
+.spark{position:absolute;z-index:5;font:900 22px/1 var(--body);color:var(--bc);-webkit-text-stroke:1.5px #fff;paint-order:stroke;pointer-events:none;animation:sparkle .9s ease-out forwards}
+@keyframes sparkle{0%{transform:scale(.2);opacity:0}30%{opacity:1;transform:scale(1.2)}100%{transform:translate(var(--x),var(--y)) scale(.6);opacity:0}}
+.pick{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.pick button{display:flex;align-items:center;gap:9px;border:2px solid transparent;background:#ffffff99;border-radius:999px;padding:5px 16px 5px 5px;cursor:pointer;font:700 15px/1 var(--body);color:var(--cherry);transition:transform .3s cubic-bezier(.3,1.8,.5,1),background .3s,border-color .3s}
+.pick button img{width:46px;height:46px;border-radius:50%;object-fit:cover;background:#fff;border:3px solid var(--pc);transition:transform .3s}
+.pick button small{display:block;font:600 11px/1.2 var(--body);letter-spacing:.06em;opacity:.7;margin-top:2px}
+.pick button span{text-align:left}
+.pick button:hover{transform:translateY(-2px)}
+.pick button[aria-checked="true"]{background:var(--cherry);color:var(--milk);border-color:var(--cherry);transform:scale(1.06)}
+.pick button[aria-checked="true"] img{transform:rotate(-6deg) scale(1.05)}
+.hero-line{margin:0 0 22px;font:italic 400 clamp(20px,2vw,26px)/1.25 var(--serif);max-width:32ch;min-height:2.5em}
+.hero-line b{font:800 .72em/1 var(--display);font-style:normal;letter-spacing:-.02em;color:var(--hl,var(--cherry))}
+.hero-line.swap{animation:lineIn .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes lineIn{from{opacity:0;transform:translateY(8px)}}
 .blow{user-select:none;-webkit-user-select:none;touch-action:none;border:0;cursor:pointer;background:var(--cherry);color:var(--milk);font:900 clamp(18px,2vw,22px)/1 var(--display);padding:22px 30px;border-radius:999px;letter-spacing:-.02em;transition:transform .2s}
 .blow:active{transform:scale(.96)}
 .readout{display:flex;gap:28px;margin-top:22px;flex-wrap:wrap}
@@ -466,7 +497,8 @@ form button{border:0;background:var(--gum);color:var(--cherry);font:800 15px/1 v
     <div class="wrap">
       <div>
         <h2 class="sec">Gonfle.<br>Lâche.<br><em>Avant que ça pète.</em></h2>
-        <p class="lede">Reste appuyé·e pour souffler, relâche pour garder ta bulle. Trop gourmand·e et c'est sur ta figure.</p>
+        <p class="lede">Reste appuyé·e pour souffler, relâche pour garder ta bulle. Trop gourmand·e et c'est sur sa figure.</p>
+        <p class="hero-line" id="heroLine" aria-live="polite"></p>
         <button class="blow" id="blow" type="button" data-hover>Maintenir pour souffler</button>
         <div class="readout">
           <div>Ta bulle<b id="now">0 cm</b></div>
@@ -474,10 +506,17 @@ form button{border:0;background:var(--gum);color:var(--cherry);font:800 15px/1 v
         </div>
         <p class="verdict" id="verdict" aria-live="polite"></p>
       </div>
-      <div class="arena" aria-hidden="true">
-        <div class="face"></div>
-        <div class="gum" id="gum"></div>
-        <div class="splat" id="splat"></div>
+      <div class="arena-col">
+        <div class="arena" aria-hidden="true">
+          <div class="heroine" id="heroine">
+            <img id="heroImg" src="img/lou-cut.webp" alt="" width="420" height="463">
+            <div class="goo" id="heroGoo"><i style="left:calc(var(--mx) - 17%);top:calc(var(--my) - 6%);width:14%;height:10%"></i><i style="left:calc(var(--mx) - 6%);top:calc(var(--my) + 2%);width:16%;height:10%"></i><i style="left:calc(var(--mx) - 6%);top:calc(var(--my) - 12%);width:8%;height:6%"></i><i style="left:calc(var(--mx) + 9%);top:calc(var(--my) - 7%);width:11%;height:8%"></i><i style="left:calc(var(--mx) - 1%);top:calc(var(--my) - 25%);width:7%;height:5%"></i></div>
+            <span class="marks" id="marks">!!</span>
+            <div class="gum" id="gum"></div>
+            <div class="splat" id="splat"></div>
+          </div>
+        </div>
+        <div class="pick" id="pick" role="radiogroup" aria-label="Choisis ton héroïne"></div>
       </div>
     </div>
   </section>
@@ -634,14 +673,47 @@ const MAXS=9;
 function grow(){if(!holding)return;size+=0.035+size*0.012;gum.style.transform=`scale(${1+size})`;nowEl.textContent=Math.round(size*4)+' cm';gum.classList.toggle('wob',size>limit*.75);if(size>=limit){burst();return}raf=requestAnimationFrame(grow)}
 function start(e){e.preventDefault();if(holding)return;holding=true;dead=false;size=0;limit=MAXS*(.45+Math.random()*.55);ver.textContent='';blow.textContent='Souffle…';try{blow.setPointerCapture(e.pointerId)}catch(_){}grow()}
 function stop(){if(!holding)return;holding=false;cancelAnimationFrame(raf);gum.classList.remove('wob');blow.textContent='Maintenir pour souffler';if(dead)return;const cm=Math.round(size*4);
-  if(cm>best){best=cm;store.set('popzy-best',best);bestEl.textContent=best+' cm';ver.textContent=`Nouveau record : ${cm} cm. Icône.`;pop(.7)}else ver.textContent=cm<8?'Mignon. Un peu timide.':cm<20?'Pas mal du tout.':'Énorme. On t\'a vu·e.';
+  if(cm>best){best=cm;store.set('popzy-best',best);bestEl.textContent=best+' cm';ver.textContent=`Nouveau record : ${cm} cm. ${H().name} est fière de toi.`;pop(.7);celebrate()}else ver.textContent=cm<8?'Mignon. Un peu timide.':cm<20?'Pas mal du tout.':'Énorme. On t\'a vu·e.';
   setTimeout(()=>{if(!holding){gum.style.transform='scale(1)';}},900)}
-function burst(){dead=true;holding=false;gum.classList.remove('wob');gum.style.transform='scale(0)';nowEl.textContent='0 cm';ver.textContent='POP. C\'est sur ta figure.';blow.textContent='Maintenir pour souffler';pop(.5);
+function burst(){dead=true;holding=false;gum.classList.remove('wob');gum.style.transform='scale(0)';nowEl.textContent='0 cm';ver.textContent=`POP. C'est sur la figure de ${H().name}.`;blow.textContent='Maintenir pour souffler';pop(.5);gooFace();
   for(let i=0;i<14;i++){const d=document.createElement('i');const a=Math.random()*Math.PI*2,r=80+Math.random()*120;d.style.setProperty('--x',Math.cos(a)*r+'px');d.style.setProperty('--y',Math.sin(a)*r+'px');splat.appendChild(d);setTimeout(()=>d.remove(),650)}
   setTimeout(()=>{gum.style.transform='scale(1)'},700)}
 blow.addEventListener('pointerdown',start);['pointerup','pointercancel','pointerleave'].forEach(t=>blow.addEventListener(t,stop));
 blow.addEventListener('keydown',e=>{if((e.key===' '||e.key==='Enter')&&!e.repeat){holding=false;start(e)}});blow.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter')stop()});
 blow.addEventListener('contextmenu',e=>e.preventDefault());
+
+/* héroïnes : choix, réactions */
+const HEROES={
+ lou:{name:'Lou',tag:'la Pop',c:'#FF2D87',c2:'#FFB3CF',bg:'#F9CADF',mx:'44.5%',my:'55%',line:'<b>Lou</b> te défie de battre son record. Et de le poster en story.'},
+ nour:{name:'Nour',tag:'la Cool',c:'#F5A300',c2:'#FFE671',bg:'#FFE9A6',mx:'46%',my:'54.5%',line:'<b>Nour</b> dit que tu tiendras pas 3 secondes. Prouve-lui le contraire.'},
+ romy:{name:'Romy',tag:'la Futée',c:'#3A86C8',c2:'#B9DDF2',bg:'#CBE3F3',mx:'43%',my:'54.5%',line:'<b>Romy</b> a calculé la taille parfaite. À toi de la trouver.'}
+};
+const heroEl=$('#heroine'),heroImg=$('#heroImg'),heroLine=$('#heroLine'),pick=$('#pick'),gameSec=$('#bulle'),goo=$('#heroGoo'),marks=$('#marks');
+let heroId=store.get('popzy-heroine','lou');if(!HEROES[heroId])heroId='lou';
+const H=()=>HEROES[heroId];
+Object.keys(HEROES).forEach(k=>{const im=new Image();im.src=`img/${k}-cut.webp`});
+pick.innerHTML=Object.entries(HEROES).map(([k,h])=>`<button type="button" role="radio" data-h="${k}" style="--pc:${h.c}" data-hover><img src="img/${k}.jpg" alt="" width="46" height="46"><span>${h.name}<small>${h.tag}</small></span></button>`).join('');
+function paintHero(){const h=H();heroImg.src=`img/${heroId}-cut.webp`;heroImg.alt=`${h.name}, ${h.tag}`;
+  heroEl.style.setProperty('--bc',h.c);heroEl.style.setProperty('--bc2',h.c2);heroEl.style.setProperty('--mx',h.mx);heroEl.style.setProperty('--my',h.my);
+  gameSec.style.backgroundColor=h.bg;heroLine.style.setProperty('--hl',h.c);heroLine.innerHTML=h.line;
+  heroLine.classList.remove('swap');void heroLine.offsetWidth;heroLine.classList.add('swap');
+  $$('button',pick).forEach(b=>b.setAttribute('aria-checked',String(b.dataset.h===heroId)))}
+function setHero(k){if(k===heroId||!HEROES[k])return;if(holding)stop();heroId=k;store.set('popzy-heroine',k);goo.classList.remove('on','off');
+  if(reduce){paintHero();return}
+  heroEl.classList.remove('in','shock','yay');heroEl.classList.add('out');pop(1.3);
+  setTimeout(()=>{paintHero();heroEl.classList.remove('out');void heroEl.offsetWidth;heroEl.classList.add('in');pop(.9)},280)}
+pick.addEventListener('click',e=>{const b=e.target.closest('button[data-h]');if(b)setHero(b.dataset.h)});
+pick.addEventListener('keydown',e=>{if(!['ArrowRight','ArrowLeft'].includes(e.key))return;const ks=Object.keys(HEROES);const i=(ks.indexOf(heroId)+(e.key==='ArrowRight'?1:ks.length-1))%ks.length;setHero(ks[i]);pick.querySelector(`[data-h="${ks[i]}"]`).focus();e.preventDefault()});
+let gooT;
+function gooFace(){clearTimeout(gooT);goo.classList.remove('off');goo.classList.add('on');marks.classList.remove('on');void marks.offsetWidth;marks.classList.add('on');
+  if(!reduce){heroEl.classList.remove('shock','yay','in');void heroEl.offsetWidth;heroEl.classList.add('shock')}
+  gooT=setTimeout(()=>{goo.classList.add('off');setTimeout(()=>goo.classList.remove('on','off'),650)},2400)}
+function celebrate(){if(reduce)return;heroEl.classList.remove('shock','yay','in');void heroEl.offsetWidth;heroEl.classList.add('yay');
+  for(let i=0;i<7;i++){const sp=document.createElement('span');sp.className='spark';sp.textContent='✦';const a=-Math.PI*(.1+.8*Math.random());const r=70+Math.random()*90;
+    sp.style.cssText=`left:${45+Math.random()*10}%;top:${20+Math.random()*15}%;--x:${Math.cos(a)*r}px;--y:${Math.sin(a)*r}px;animation-delay:${i*40}ms`;heroEl.appendChild(sp);setTimeout(()=>sp.remove(),1200)}}
+heroEl.addEventListener('animationend',e=>{if(e.target===heroEl)heroEl.classList.remove('in','shock','yay')});
+paintHero();
+heroLine.classList.remove('swap');
 
 /* stickers draggables */
 const board=$('#board');
