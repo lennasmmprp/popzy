@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Popzy · Prisme de Kapferer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Serif:ital@0;1&family=Unbounded:wght@500;800;900&display=swap">
+<style>
+/* Layout : le vrai prisme — 3 facettes à gauche, l'hexagone-chewing-gum au centre, 3 facettes à droite, tout tient dans un écran projeté */
+:root{
+  --cherry:#2A0614;
+  --milk:#FFF0F5;
+  --fraise:#FF2D87;  --fraise-ink:#C8145F;  --fraise-soft:#FFE1EE;
+  --menthe:#3A86C8;  --menthe-ink:#215F99;  --menthe-soft:#E1EFF9;
+  --butter:#FFD84A;
+  --display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --serif:"Instrument Serif","Times New Roman",Georgia,serif;
+  --body:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --txt:clamp(14px,min(1.25vw,2.2vh),24px);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--milk);color:var(--cherry);font-family:var(--body);line-height:1.4;min-height:100vh;overflow-x:hidden}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:90;opacity:.11;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--fraise);outline-offset:3px;border-radius:8px}
+
+/* bulles de fond */
+.bubbles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.bubbles i{position:absolute;border-radius:50%;opacity:.35;animation:float var(--d,14s) ease-in-out infinite alternate;
+  background:radial-gradient(circle at 32% 28%,#fff 0 9%,transparent 24%),radial-gradient(circle,var(--c) 0 60%,color-mix(in srgb,var(--c) 70%,#fff) 100%)}
+@keyframes float{from{transform:translate(0,0) scale(1)}to{transform:translate(var(--x,20px),var(--y,-40px)) scale(1.08)}}
+
+/* en-tête */
+header{position:relative;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding:calc(14px + env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px)) 6px max(20px,env(safe-area-inset-left,0px))}
+.brand{display:flex;align-items:center;gap:16px;min-width:0}
+.logo{font:900 22px/1 var(--display);letter-spacing:-.04em;text-decoration:none;background:var(--cherry);color:#FF8EC3;padding:9px 16px 11px;border-radius:999px;rotate:-4deg;flex-shrink:0}
+h1{margin:0;font:900 clamp(18px,min(2vw,3.4vh),34px)/1 var(--display);letter-spacing:-.04em}
+h1 em{font:italic 400 1.1em/1 var(--serif);letter-spacing:-.01em}
+.tools{display:flex;gap:8px;align-items:center}
+.btn{border:1.5px solid var(--cherry);background:#ffffffb3;border-radius:999px;padding:12px 18px;font:700 14px/1 var(--body);cursor:pointer}
+.btn.main{background:var(--cherry);color:var(--milk);font:800 14px/1 var(--display);padding:14px 20px}
+.btn[aria-pressed="true"]{background:var(--cherry);color:var(--milk)}
+body.present .btn.main{display:none}
+
+/* scène */
+.stage{position:relative;z-index:2;display:grid;gap:clamp(12px,1.6vw,26px) clamp(14px,2vw,34px);
+  grid-template-columns:minmax(0,1fr) minmax(280px,min(36vw,62vh)) minmax(0,1fr);
+  grid-template-areas:"phy hex per" "rel hex cul" "ref hex men";
+  align-items:center;padding:clamp(6px,1.5vh,18px) max(20px,env(safe-area-inset-right,0px)) clamp(16px,3vh,30px) max(20px,env(safe-area-inset-left,0px));
+  min-height:calc(100vh - 80px)}
+body.present .stage{padding-bottom:96px}
+.center{grid-area:hex;display:flex;flex-direction:column;align-items:center;gap:clamp(4px,1vh,10px);align-self:center}
+.axis{font:700 clamp(11px,min(.9vw,1.6vh),15px)/1 var(--body);letter-spacing:.16em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.axis::before,.axis::after{content:"";width:22px;height:2px;background:currentColor;opacity:.35;border-radius:2px}
+.hexwrap{position:relative;width:100%;animation:bob 6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-8px) rotate(.6deg)}}
+.hex{display:block;width:100%;height:auto;overflow:visible}
+.edge{fill:none;stroke-width:11;stroke-linecap:round;transition:stroke-dashoffset .9s cubic-bezier(.6,0,.2,1),opacity .4s,stroke-width .4s;filter:drop-shadow(0 3px 0 #2a061426)}
+.edge.a{stroke:var(--fraise)}.edge.b{stroke:var(--menthe)}
+.edge.active{stroke-width:15;filter:drop-shadow(0 0 10px var(--glow)) drop-shadow(0 0 3px #fff)}
+.edge.a.active{--glow:var(--fraise)}.edge.b.active{--glow:var(--menthe)}
+.hex .word{font:900 64px/1 var(--display);letter-spacing:-.06em;fill:#fff;paint-order:stroke;stroke:var(--cherry);stroke-width:7px;stroke-linejoin:round}
+.hex-bubble{transform-origin:200px 200px;transform-box:view-box;opacity:0}
+.legend{display:grid;gap:6px;margin-top:4px;font:600 clamp(12px,min(1.05vw,1.9vh),18px)/1.25 var(--body);text-align:left;max-width:100%}
+.legend>span{display:flex;align-items:center;gap:10px}
+.legend b{font-weight:800}
+.legend i{width:16px;height:16px;border-radius:50%;flex-shrink:0;box-shadow:inset -2px -3px 0 #0002}
+
+/* facettes */
+.facet{position:relative;padding:clamp(12px,1.6vh,22px) clamp(14px,1.4vw,24px);border-radius:28px 28px 28px 8px;background:#ffffffc7;
+  box-shadow:0 14px 30px -18px #2a061455;transition:opacity .45s,filter .45s,transform .5s cubic-bezier(.3,1.6,.5,1);transform-origin:center}
+.facet.b{border-radius:28px 28px 8px 28px}
+.facet.a{background:color-mix(in srgb,var(--fraise-soft) 75%,#fff)}
+.facet.b{background:color-mix(in srgb,var(--menthe-soft) 75%,#fff)}
+.facet h2{margin:0 0 6px;font:900 clamp(18px,min(1.8vw,3.2vh),34px)/1 var(--display);letter-spacing:-.04em;display:flex;align-items:center;gap:10px}
+.facet.a h2{color:var(--fraise-ink)}.facet.b h2{color:var(--menthe-ink)}
+.facet h2::before{content:"";width:.62em;height:.62em;border-radius:50%;background:currentColor;box-shadow:inset -2px -3px 0 #0003,inset 2px 2px 0 #fff6;flex-shrink:0}
+.facet p{margin:0;font-size:var(--txt);max-width:44ch}
+.facet p+p{margin-top:.45em}
+.facet .who{font-weight:800}
+.phy{grid-area:phy}.rel{grid-area:rel}.ref{grid-area:ref}.per{grid-area:per}.cul{grid-area:cul}.men{grid-area:men}
+.facet.a{justify-self:end}.facet.b{justify-self:start}
+body.present .facet{opacity:.22;filter:saturate(.4)}
+body.present .facet.seen{opacity:.45;filter:saturate(.7)}
+body.present .facet.active{opacity:1;filter:none;transform:scale(1.07);z-index:3;animation:stretch .85s cubic-bezier(.3,1.6,.5,1)}
+body.present.synth-on .facet{opacity:.9;filter:none;transform:none;animation:none}
+@keyframes stretch{0%{transform:scale(1)}25%{transform:scale(1.16,.9)}50%{transform:scale(1.02,1.1)}75%{transform:scale(1.09,1.04)}100%{transform:scale(1.07)}}
+
+/* synthèse */
+.synth{position:fixed;inset:0;z-index:20;display:grid;place-items:center;pointer-events:none;padding:20px}
+.synth p{margin:0;text-align:center;font:900 clamp(38px,min(7vw,12vh),130px)/.95 var(--display);letter-spacing:-.06em;text-wrap:balance;
+  background:#fff0f5e6;padding:.35em .55em .4em;border-radius:.5em;box-shadow:0 30px 80px -30px #2a061466;opacity:0;transform:scale(.6) rotate(-3deg)}
+.synth p span{display:block}
+.synth .s1{color:var(--fraise-ink)}.synth .s2{color:var(--menthe-ink);font:italic 400 1.08em/1 var(--serif);letter-spacing:-.02em}
+body.synth-on .synth p{animation:synthIn .9s 1s cubic-bezier(.3,1.6,.5,1) forwards}
+@keyframes synthIn{to{opacity:1;transform:none}}
+
+/* barre de navigation */
+.bar{position:fixed;z-index:30;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));translate:-50% 0;display:none;align-items:center;gap:6px;
+  background:var(--cherry);color:var(--milk);padding:6px;border-radius:999px;box-shadow:0 18px 40px -16px #2a061499;max-width:calc(100vw - 24px)}
+body.present .bar{display:flex}
+.bar button{border:0;background:transparent;color:inherit;height:44px;min-width:44px;padding:0 14px;border-radius:999px;font:700 14px/1 var(--body);cursor:pointer;white-space:nowrap}
+.bar button:hover{background:#ffffff1f}
+.bar .count{font:800 15px/1 var(--display);min-width:92px;text-align:center;font-variant-numeric:tabular-nums}
+.bar .sep{width:1px;height:24px;background:#ffffff33}
+
+/* éclats de bulles */
+.pop{position:fixed;z-index:25;border-radius:50%;pointer-events:none;background:radial-gradient(circle at 32% 28%,#fff 0 14%,var(--c) 30%)}
+
+/* mobile : hexagone en haut, facettes empilées */
+@media (max-width:860px){
+  .stage{grid-template-columns:1fr;grid-template-areas:none;min-height:0}
+  .center{grid-area:auto;width:min(420px,100%);justify-self:center}
+  .facet,.facet.a,.facet.b{grid-area:auto;justify-self:stretch}
+  .facet p{max-width:none;font-size:16px}
+  .facet h2{font-size:22px}
+  header{justify-content:center;text-align:center}
+  .bar .lbl{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition-duration:.01ms!important}
+  body.present .facet.active{transform:none}
+  body.synth-on .synth p{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<div class="bubbles" id="bubbles" aria-hidden="true"></div>
+
+<header>
+  <div class="brand">
+    <a class="logo" href="index.html" aria-label="Retour au site Popzy">popzy</a>
+    <h1>Le prisme d'identité <em>de Kapferer</em></h1>
+  </div>
+  <div class="tools">
+    <button class="btn" id="snd" type="button" aria-pressed="false">Son : off</button>
+    <button class="btn main" id="start" type="button">Lancer la présentation</button>
+  </div>
+</header>
+
+<main class="stage" id="stage">
+  <div class="center">
+    <div class="axis">Émetteur construit</div>
+    <div class="hexwrap">
+      <svg class="hex" id="hex" viewBox="-30 -30 460 460" role="img" aria-label="Hexagone du prisme Popzy : extériorisation en rose à gauche, intériorisation en bleu à droite">
+        <defs>
+          <clipPath id="hexClip"><path id="hexShape"></path></clipPath>
+          <radialGradient id="gloss" cx="34%" cy="22%" r="55%"><stop offset="0" stop-color="#fff" stop-opacity=".85"></stop><stop offset=".45" stop-color="#fff" stop-opacity=".18"></stop><stop offset="1" stop-color="#fff" stop-opacity="0"></stop></radialGradient>
+          <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1"><stop offset=".5" stop-color="#2A0614" stop-opacity="0"></stop><stop offset="1" stop-color="#2A0614" stop-opacity=".24"></stop></linearGradient>
+          <filter id="drop" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="18" stdDeviation="14" flood-color="#2A0614" flood-opacity=".22"></feDropShadow></filter>
+          <radialGradient id="bub" cx="35%" cy="30%" r="70%"><stop offset="0" stop-color="#fff" stop-opacity=".9"></stop><stop offset=".25" stop-color="#FFB3CF" stop-opacity=".55"></stop><stop offset=".75" stop-color="#9CCBEA" stop-opacity=".45"></stop><stop offset="1" stop-color="#3A86C8" stop-opacity=".6"></stop></radialGradient>
+        </defs>
+        <g filter="url(#drop)">
+          <g clip-path="url(#hexClip)">
+            <rect x="-20" y="-20" width="440" height="440" fill="#FF2D87"></rect>
+            <path fill="#3A86C8" d="M200,20 C268,92 132,142 200,200 C268,258 132,308 200,380 L430,380 L430,20 Z"></path>
+            <!-- marbrure : filets autour de la jonction + spirale -->
+            <path d="M188,20 C256,92 120,142 188,200 C256,258 120,308 188,380" fill="none" stroke="#FFB3CF" stroke-width="7" opacity=".7"></path>
+            <path d="M213,20 C281,92 145,142 213,200 C281,258 145,308 213,380" fill="none" stroke="#9CCBEA" stroke-width="7" opacity=".75"></path>
+            <path d="M200,20 C268,92 132,142 200,200 C268,258 132,308 200,380" fill="none" stroke="#fff" stroke-width="3" opacity=".55"></path>
+            <path d="M200,200 m-58,0 a58,58 0 1,1 58,58 a40,40 0 1,1 -40,-40 a24,24 0 1,1 24,24" fill="none" stroke="#fff" stroke-width="4" opacity=".28" stroke-linecap="round"></path>
+            <rect x="-20" y="-20" width="440" height="440" fill="url(#shade)"></rect>
+            <ellipse cx="135" cy="105" rx="120" ry="80" fill="url(#gloss)"></ellipse>
+            <ellipse cx="292" cy="300" rx="36" ry="14" fill="#fff" opacity=".22" transform="rotate(-30 292 300)"></ellipse>
+          </g>
+          <use href="#hexShape" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="3"></use>
+        </g>
+        <g id="edges"></g>
+        <text class="word" x="200" y="222" text-anchor="middle">POPZY</text>
+        <circle class="hex-bubble" id="hexBubble" cx="200" cy="200" r="150" fill="url(#bub)" stroke="#fff" stroke-opacity=".8" stroke-width="3"></circle>
+      </svg>
+    </div>
+    <div class="axis">Destinataire construit</div>
+    <div class="legend">
+      <span><i style="background:var(--fraise)"></i><span><b>Extériorisation</b> : ce qu'on voit de la marque</span></span>
+      <span><i style="background:var(--menthe)"></i><span><b>Intériorisation</b> : ce que la marque porte en elle</span></span>
+    </div>
+  </div>
+
+  <!-- ordre du DOM = ordre de la présentation -->
+  <section class="facet a phy" data-edge="physique">
+    <h2>Physique</h2>
+    <p>Deux saveurs, une seule bulle. Packaging durable, ludique et coloré. Identité visuelle à venir.</p>
+  </section>
+  <section class="facet b per" data-edge="personnalite">
+    <h2>Personnalité</h2>
+    <p>Trois héroïnes pétillantes, aventurières et joviales. Populaires mais sélectives. Ton : fun, bienveillant, joyeusement maladroit.</p>
+  </section>
+  <section class="facet b cul" data-edge="culture">
+    <h2>Culture</h2>
+    <p>Ici, chacun a sa place. Partage et créativité d'abord : on est aimé pour ce qu'on est, pas pour ce qu'on a.</p>
+  </section>
+  <section class="facet a rel" data-edge="relation">
+    <h2>Relation</h2>
+    <p>Le pote qui met de bonne humeur. Good vibes et petits conseils cachés dans chaque emballage.</p>
+  </section>
+  <section class="facet a ref" data-edge="reflet">
+    <h2>Reflet</h2>
+    <p>Un collégien de 10-15 ans, croqué au feutre : fun, actif, extraverti, croqueur de vie et partageur. Son moment fort : la récré. Lui consomme, ses parents achètent.</p>
+  </section>
+  <section class="facet b men" data-edge="mentalisation">
+    <h2>Mentalisation</h2>
+    <p><span class="who">Enfant :</span> « Je suis à la mode, populaire, j'ose aller vers les autres et je me sens bien. »</p>
+    <p><span class="who">Parent :</span> « Mon enfant est dans le coup, inclus et protégé du harcèlement. »</p>
+  </section>
+</main>
+
+<div class="synth" aria-live="polite"><p><span class="s1">Deux saveurs,</span><span class="s2">une seule bulle.</span></p></div>
+
+<nav class="bar" aria-label="Navigation de la présentation">
+  <button type="button" id="prev" aria-label="Facette précédente">←</button>
+  <span class="count" id="count">1 / 6</span>
+  <button type="button" id="next" aria-label="Facette suivante">→</button>
+  <span class="sep"></span>
+  <button type="button" id="fs"><span aria-hidden="true">⛶</span> <span class="lbl">Plein écran</span></button>
+  <button type="button" id="quit">✕ <span class="lbl">Quitter</span></button>
+</nav>
+
+<script src="sound.js"></script>
+<script>
+(() => {
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const C = { a: '#FF2D87', b: '#3A86C8' };
+
+  /* ---------- hexagone (pointe en haut) : forme arrondie + 6 côtés ---------- */
+  const cx = 200, cy = 200, R = 150;
+  const V = r => [-90, -30, 30, 90, 150, 210].map(d => [cx + r * Math.cos(d * Math.PI / 180), cy + r * Math.sin(d * Math.PI / 180)]);
+  const pts = V(R), rc = 26;
+  let d = '';
+  pts.forEach((p, i) => {
+    const prev = pts[(i + 5) % 6], next = pts[(i + 1) % 6];
+    const toward = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+    const k = rc / Math.hypot(next[0] - p[0], next[1] - p[1]);
+    const a = toward(p, prev, k), b = toward(p, next, k);
+    d += (i ? 'L' : 'M') + a.map(n => n.toFixed(1)).join(',') + 'Q' + p.map(n => n.toFixed(1)).join(',') + ' ' + b.map(n => n.toFixed(1)).join(',');
+  });
+  $('#hexShape').setAttribute('d', d + 'Z');
+  // côtés : sommets 0 haut, 1 haut-droite, 2 bas-droite, 3 bas, 4 bas-gauche, 5 haut-gauche
+  const E = { physique: [5, 0, 'a'], relation: [4, 5, 'a'], reflet: [3, 4, 'a'], personnalite: [0, 1, 'b'], culture: [1, 2, 'b'], mentalisation: [2, 3, 'b'] };
+  const outer = V(R + 17), edgeEls = {};
+  for (const [k, [i, j, side]] of Object.entries(E)) {
+    const p = outer[i], q = outer[j], t = 0.13;
+    const a = [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t], b = [q[0] + (p[0] - q[0]) * t, q[1] + (p[1] - q[1]) * t];
+    const el = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    el.setAttribute('d', `M${a[0].toFixed(1)},${a[1].toFixed(1)} L${b[0].toFixed(1)},${b[1].toFixed(1)}`);
+    el.setAttribute('class', 'edge ' + side);
+    $('#edges').appendChild(el);
+    const len = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    el.style.strokeDasharray = len; el.style.strokeDashoffset = 0;
+    edgeEls[k] = { el, len, side };
+  }
+
+  /* ---------- bulles de fond ---------- */
+  const bw = $('#bubbles'), nB = innerWidth < 700 ? 8 : 14;
+  for (let i = 0; i < nB; i++) {
+    const b = document.createElement('i'), s = 30 + Math.random() * 120;
+    b.style.cssText = `width:${s}px;height:${s}px;left:${Math.random() * 100}%;top:${Math.random() * 100}%;--c:${i % 2 ? C.a : C.b};--d:${10 + Math.random() * 10}s;--x:${(Math.random() - .5) * 80}px;--y:${-30 - Math.random() * 60}px;animation-delay:${-Math.random() * 10}s`;
+    bw.appendChild(b);
+  }
+
+  /* ---------- son ---------- */
+  let soundOn = false;
+  const sndBtn = $('#snd');
+  const S = (k, ...a) => { if (!soundOn) return; try { window.PopzySound && PopzySound[k] && PopzySound[k](...a); } catch (e) {} };
+  function setSound(on) {
+    soundOn = on;
+    if (on && window.PopzySound) { PopzySound.unlock(); PopzySound.setMuted(false); }
+    sndBtn.setAttribute('aria-pressed', String(on)); sndBtn.textContent = on ? 'Son : on' : 'Son : off';
+  }
+  sndBtn.addEventListener('click', () => { setSound(!soundOn); S('tap'); });
+
+  /* ---------- éclats de bulles ---------- */
+  function burst(el, color, n = 16) {
+    if (reduce) return;
+    const r = el.getBoundingClientRect(), x0 = r.left + r.width / 2, y0 = r.top + r.height / 2;
+    for (let i = 0; i < n; i++) {
+      const p = document.createElement('i'), s = 8 + Math.random() * 18, a = Math.random() * Math.PI * 2;
+      const dist = Math.max(r.width, r.height) * (0.45 + Math.random() * 0.45);
+      p.className = 'pop'; p.style.cssText = `width:${s}px;height:${s}px;left:${x0 - s / 2}px;top:${y0 - s / 2}px;--c:${color}`;
+      document.body.appendChild(p);
+      p.animate([{ transform: 'translate(0,0) scale(.3)', opacity: 1 }, { transform: `translate(${Math.cos(a) * dist}px,${Math.sin(a) * dist}px) scale(1)`, opacity: 0 }],
+        { duration: 700 + Math.random() * 500, easing: 'cubic-bezier(.2,.8,.3,1)' }).onfinish = () => p.remove();
+    }
+  }
+
+  /* ---------- mode présentation ---------- */
+  const facets = $$('.facet');            // déjà dans l'ordre : Physique, Personnalité, Culture, Relation, Reflet, Mentalisation
+  const LAST = facets.length;              // index 6 = synthèse
+  let step = -1;
+  const body = document.body;
+
+  function render(prevStep) {
+    const synth = step === LAST;
+    body.classList.toggle('synth-on', synth);
+    facets.forEach((f, i) => { f.classList.toggle('active', i === step); f.classList.toggle('seen', i < step); });
+    facets.forEach((f, i) => {
+      const e = edgeEls[f.dataset.edge];
+      const shown = synth || i <= step;
+      e.el.style.strokeDashoffset = shown ? 0 : e.len;
+      e.el.style.opacity = synth || i === step ? 1 : shown ? .5 : 0;
+      e.el.classList.toggle('active', synth || i === step);
+    });
+    $('#count').textContent = synth ? 'Synthèse' : `${step + 1} / ${LAST}`;
+    $('#prev').disabled = step <= 0;
+    $('#next').disabled = synth;
+    if (step >= 0 && step < LAST && step !== prevStep) {
+      const f = facets[step], col = f.classList.contains('a') ? C.a : C.b;
+      // relancer l'animation d'étirement
+      f.style.animation = 'none'; void f.offsetWidth; f.style.animation = '';
+      setTimeout(() => burst(f, col), 120);
+      setTimeout(() => S('bubblePop'), 160);
+      if (innerWidth <= 860) f.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+    }
+    if (synth && prevStep !== LAST) synthesis();
+  }
+  function synthesis() {
+    const bub = $('#hexBubble');
+    S('inflate', 0.6);
+    if (reduce) { S('bubblePop'); return; }
+    bub.animate([
+      { transform: 'scale(.2)', opacity: 0 },
+      { transform: 'scale(1.15)', opacity: .9, offset: .75 },
+      { transform: 'scale(1.32)', opacity: 0 }
+    ], { duration: 900, easing: 'cubic-bezier(.4,0,.6,1)' });
+    setTimeout(() => {
+      S('bubblePop'); S('shimmer');
+      const hw = $('.hexwrap');
+      burst(hw, C.a, 22); burst(hw, C.b, 22);
+    }, 700);
+    if (innerWidth <= 860) scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function go(n) {
+    const prev = step;
+    step = Math.max(0, Math.min(LAST, n));
+    if (step !== prev) render(prev);
+  }
+  function start() {
+    body.classList.add('present');
+    if (!soundOn) setSound(true);
+    step = -1; go(0);
+    $('#next').focus({ preventScroll: true });
+  }
+  function quit() {
+    body.classList.remove('present', 'synth-on');
+    step = -1;
+    facets.forEach(f => f.classList.remove('active', 'seen'));
+    Object.values(edgeEls).forEach(e => { e.el.style.strokeDashoffset = 0; e.el.style.opacity = 1; e.el.classList.remove('active'); });
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  }
+  $('#start').addEventListener('click', start);
+  $('#next').addEventListener('click', e => { e.stopPropagation(); go(step + 1); });
+  $('#prev').addEventListener('click', e => { e.stopPropagation(); go(step - 1); });
+  $('#quit').addEventListener('click', e => { e.stopPropagation(); quit(); });
+  $('#fs').addEventListener('click', e => {
+    e.stopPropagation();
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
+  });
+  document.addEventListener('click', e => {
+    if (!body.classList.contains('present') || e.target.closest('button,a,.bar')) return;
+    go(step + 1);
+  });
+  document.addEventListener('keydown', e => {
+    if (!body.classList.contains('present')) {
+      if ((e.key === 'Enter' || e.key === 'p') && e.target === document.body) start();
+      return;
+    }
+    if (['ArrowRight', ' ', 'PageDown', 'Enter'].includes(e.key)) { e.preventDefault(); go(step + 1); }
+    else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); go(step - 1); }
+    else if (e.key === 'Escape') quit();
+  });
+})();
+</script>
+</body>
+</html>
